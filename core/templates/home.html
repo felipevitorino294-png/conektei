@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <section class="hero" id="home">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>Conecte-se com os melhores especialistas online</h1>
+                <p>A CONEKTEI oferece consultoria profissional em diversas áreas com especialistas verificados. Soluções personalizadas para suas necessidades, tudo no conforto da sua casa.</p>
+                <div class="hero-buttons">
+                    <a href="#professions" class="btn">Encontrar Especialista</a>
+                    <a href="#how-it-works" class="btn btn-outline">Como Funciona</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Especialistas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Áreas de Atuação</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10k+</div>
+                        <div class="stat-label">Clientes Satisfeitos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Consultoria Online">
+            </div>
+        </div>
+    </section>
+
+    <section class="professions" id="professions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Diversas Áreas de Especialização</h2>
+                <p>Conecte-se com profissionais qualificados em diferentes áreas para obter orientação especializada.</p>
+            </div>
+            
+            <div class="profession-categories">
+                <button class="category-btn active" data-category="all">Todas</button>
+                <button class="category-btn" data-category="business">Negócios</button>
+                <button class="category-btn" data-category="tech">Tecnologia</button>
+                <button class="category-btn" data-category="health">Saúde</button>
+                <button class="category-btn" data-category="legal">Jurídico</button>
+                <button class="category-btn" data-category="creative">Criativo</button>
+            </div>
+            
+            <div class="profession-grid"></div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+                <p>Três simples passos para conectar-se com o especialista ideal para suas necessidades.</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Escolha seu Especialista</h3>
+                    <p>Navegue por nosso diretório de profissionais e selecione aquele que melhor se adapta às suas necessidades.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Agende sua Consulta</h3>
+                    <p>Escolha uma data e horário convenientes para sua consulta online através de nossa plataforma.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Conecte-se Online</h3>
+                    <p>Participe da sessão de consultoria via videochamada e receba orientação especializada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="experts" id="experts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Especialistas em Destaque</h2>
+                <p>Conheça alguns dos profissionais altamente qualificados que fazem parte da nossa rede.</p>
+            </div>
+            
+            <div class="experts-grid"></div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Planos de Consultoria</h2>
+                <p>Escolha o plano que melhor atende às suas necessidades de consultoria profissional.</p>
+            </div>
+            
+            <div class="pricing-plans">
+                <div class="pricing-card">
+                    <h3>Consulta Única</h3>
+                    <div class="price">R$ 199<span>,90</span></div>
+                    <p class="pricing-period">por sessão</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 1 hora de consultoria</li>
+                        <li><i class="fas fa-check"></i> 1 especialista à sua escolha</li>
+                        <li><i class="fas fa-check"></i> Suporte por email por 7 dias</li>
+                        <li><i class="fas fa-check"></i> Material de apoio básico</li>
+                        <li><i class="fas fa-times"></i> Acompanhamento contínuo</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Escolher Plano</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Mais Popular</div>
+                    <h3>Pacote Mensal</h3>
+                    <div class="price">R$ 599<span>,90</span></div>
+                    <p class="pricing-period">por mês</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 4 horas de consultoria</li>
+                        <li><i class="fas fa-check"></i> Até 3 especialistas diferentes</li>
+                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                        <li><i class="fas fa-check"></i> Material de apoio completo</li>
+                        <li><i class="fas fa-check"></i> Acompanhamento por 30 dias</li>
+                    </ul>
+                    <a href="#contact" class="btn">Escolher Plano</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Pacote Empresarial</h3>
+                    <div class="price">R$ 1.499<span>,90</span></div>
+                    <p class="pricing-period">por mês</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 10 horas de consultoria</li>
+                        <li><i class="fas fa-check"></i> Até 5 especialistas diferentes</li>
+                        <li><i class="fas fa-check"></i> Suporte dedicado 24/7</li>
+                        <li><i class="fas fa-check"></i> Material personalizado</li>
+                        <li><i class="fas fa-check"></i> Relatórios mensais</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Escolher Plano</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Entre em Contato</h2>
+                <p>Agende sua consulta ou tire suas dúvidas sobre nossos serviços.</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Pronto para transformar sua carreira ou negócio?</h3>
+                    <p>Nossa equipe está pronta para ajudá-lo a encontrar o especialista perfeito para suas necessidades.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Email</h4>
+                                <p>contato@conektei.com.br</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="consultationForm">
+                        <div class="form-group">
+                            <label for="name">Nome Completo</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profession">Área de Interesse</label>
+                            <select id="profession" name="profession" required>
+                                <option value="">Selecione uma área</option>
+                                <option value="advogado">Consultoria Jurídica</option>
+                                <option value="marketing">Marketing Digital</option>
+                                <option value="ti">Tecnologia da Informação</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Agendar Consulta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Dados das profissões
+        const professions = [
+            { id: 1, category: "business", icon: "fas fa-chart-line", title: "Consultor Financeiro", description: "Orientação para investimentos e planejamento." },
+            { id: 2, category: "business", icon: "fas fa-briefcase", title: "Coach de Carreira", description: "Desenvolvimento profissional e transição de carreira." },
+            { id: 3, category: "tech", icon: "fas fa-code", title: "Desenvolvedor de Software", description: "Consultoria em desenvolvimento de aplicações." },
+            { id: 4, category: "tech", icon: "fas fa-shield-alt", title: "Especialista em Cybersecurity", description: "Proteção de dados e segurança da informação." },
+            { id: 5, category: "health", icon: "fas fa-heartbeat", title: "Nutricionista", description: "Planejamento alimentar personalizado." },
+            { id: 6, category: "legal", icon: "fas fa-gavel", title: "Advogado", description: "Consultoria jurídica empresarial e contratos." },
+            { id: 9, category: "creative", icon: "fas fa-paint-brush", title: "Designer Gráfico", description: "Criação de identidade visual e branding." },
+            { id: 10, category: "creative", icon: "fas fa-bullhorn", title: "Especialista em Marketing", description: "Estratégias de marketing digital." }
+        ];
+
+        // Dados dos especialistas
+        const experts = [
+            { id: 1, name: "Dr. Carlos Silva", specialty: "Advogado Corporativo", rating: 4.9, image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "15 anos de experiência.", tags: ["Direito", "Contratos"] },
+            { id: 2, name: "Dra. Mariana Costa", specialty: "Psicóloga Clínica", rating: 4.8, image: "https://images.unsplash.com/photo-1594824434340-7e7dfc37cabb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Especialista em TCC.", tags: ["TCC", "Saúde"] },
+            { id: 3, name: "Ricardo Mendes", specialty: "Consultor Financeiro", rating: 4.9, image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Especialista em investimentos.", tags: ["Finanças"] },
+            { id: 4, name: "Ana Beatriz", specialty: "Marketing Digital", rating: 4.7, image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Estratégias de crescimento.", tags: ["SEO", "Branding"] }
+        ];
+
+        // Selecionar elementos
+        const professionGrid = document.querySelector('.profession-grid');
+        const expertsGrid = document.querySelector('.experts-grid');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        // Função para mostrar profissões
+        function renderProfessions(category) {
+            professionGrid.innerHTML = '';
+            const filtered = category === 'all' ? professions : professions.filter(p => p.category === category);
+            
+            filtered.forEach(prof => {
+                const card = `
+                    <div class="profession-card">
+                        <div class="profession-icon"><i class="${prof.icon}"></i></div>
+                        <h3>${prof.title}</h3>
+                        <p>${prof.description}</p>
+                        <a href="#contact" class="btn btn-outline">Agendar</a>
+                    </div>`;
+                professionGrid.innerHTML += card;
+            });
+        }
+
+        // Função para mostrar especialistas
+        function renderExperts() {
+            expertsGrid.innerHTML = '';
+            experts.forEach(exp => {
+                const card = `
+                    <div class="expert-card">
+                        <div class="expert-image">
+                            <img src="${exp.image}" alt="${exp.name}">
+                            <div class="expert-rating"><i class="fas fa-star"></i> ${exp.rating}</div>
+                        </div>
+                        <div class="expert-info">
+                            <h3>${exp.name}</h3>
+                            <span class="expert-specialty">${exp.specialty}</span>
+                            <p class="expert-description">${exp.description}</p>
+                            <div class="expert-tags">
+                                ${exp.tags.map(t => `<span class="expert-tag">${t}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>`;
+                expertsGrid.innerHTML += card;
+            });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProfessions('all');
+            renderExperts();
+        });
+
+        // Filtros
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderProfessions(btn.dataset.category);
+            });
+        });
+    </script>
+
+{% endblock %}
