@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrar / Cadastrar{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    <div class="messages-container" style="position: fixed; top: 100px; right: 20px; z-index: 1000;">
+        {% for message in messages %}
+            <div style="background: {% if message.tags == 'error' %}#ff4d4d{% else %}#4CAF50{% endif %}; 
+                        color: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-toggle">
+            <button id="loginBtn" class="active">Entrar</button>
+            <button id="registerBtn">Cadastrar</button>
+        </div>
+
+        <div id="loginForm" class="auth-form active">
+            <h2>Bem-vindo de volta!</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Seu email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Sua senha" required>
+                </div>
+                <div class="form-actions">
+                    <a href="#" class="forgot-pass">Esqueceu a senha?</a>
+                </div>
+                <button type="submit" class="btn-submit">Acessar Conta</button>
+            </form>
+        </div>
+
+        <div id="registerForm" class="auth-form">
+            <h2>Crie sua conta</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+
+                <p style="margin-bottom: 10px; font-weight: 500; color: #555;">Eu quero:</p>
+                <div class="user-type-selection">
+                    <label class="type-option">
+                        <input type="radio" name="user_type" value="client" checked>
+                        <span><i class="fas fa-search"></i> Contratar</span>
+                    </label>
+                    <label class="type-option">
+                        <input type="radio" name="user_type" value="specialist">
+                        <span><i class="fas fa-briefcase"></i> Trabalhar</span>
+                    </label>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="name" placeholder="Nome completo" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Seu email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Crie uma senha" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="confirm_password" placeholder="Confirme a senha" required>
+                </div>
+                <button type="submit" class="btn-submit">Cadastrar Grátis</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    loginBtn.addEventListener('click', () => {
+        loginBtn.classList.add('active');
+        registerBtn.classList.remove('active');
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+    });
+
+    registerBtn.addEventListener('click', () => {
+        registerBtn.classList.add('active');
+        loginBtn.classList.remove('active');
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+    });
+</script>
+{% endblock %}

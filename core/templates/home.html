@@ -8,11 +8,20 @@
         <div class="container hero-container">
             <div class="hero-content">
                 <h1>Conecte-se com os melhores especialistas online</h1>
-                <p>A CONEKTEI oferece consultoria profissional em diversas áreas com especialistas verificados. Soluções personalizadas para suas necessidades, tudo no conforto da sua casa.</p>
+                <p>A CONEKTEI oferece consultoria profissional em diversas áreas com especialistas verificados. Soluções personalizadas para suas necessidades.</p>
+                
+                <form action="{% url 'home' %}" method="GET" class="hero-search">
+                    <div class="input-group-hero">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="q" placeholder="Busque por nome ou profissão..." value="{{ request.GET.q|default:'' }}">
+                        <button type="submit">Buscar</button>
+                    </div>
+                </form>
+
                 <div class="hero-buttons">
-                    <a href="#professions" class="btn">Encontrar Especialista</a>
-                    <a href="#how-it-works" class="btn btn-outline">Como Funciona</a>
+                    <a href="#how-it-works" class="btn btn-outline" style="border: none; color: #8ecae6; padding: 0;">Como funciona?</a>
                 </div>
+
                 <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">500+</div>
@@ -20,11 +29,11 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">50+</div>
-                        <div class="stat-label">Áreas de Atuação</div>
+                        <div class="stat-label">Áreas</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">10k+</div>
-                        <div class="stat-label">Clientes Satisfeitos</div>
+                        <div class="stat-label">Clientes</div>
                     </div>
                 </div>
             </div>
@@ -38,19 +47,34 @@
         <div class="container">
             <div class="section-title">
                 <h2>Diversas Áreas de Especialização</h2>
-                <p>Conecte-se com profissionais qualificados em diferentes áreas para obter orientação especializada.</p>
+                <p>Navegue por categorias para encontrar o profissional ideal.</p>
             </div>
             
             <div class="profession-categories">
-                <button class="category-btn active" data-category="all">Todas</button>
-                <button class="category-btn" data-category="business">Negócios</button>
-                <button class="category-btn" data-category="tech">Tecnologia</button>
-                <button class="category-btn" data-category="health">Saúde</button>
-                <button class="category-btn" data-category="legal">Jurídico</button>
-                <button class="category-btn" data-category="creative">Criativo</button>
+                <a href="{% url 'home' %}" class="category-btn {% if not request.GET.category %}active{% endif %}">
+                    Todas
+                </a>
+
+                <a href="?category=Tecnologia e TI" class="category-btn {% if request.GET.category == 'Tecnologia e TI' %}active{% endif %}">
+                    Tecnologia
+                </a>
+                
+                <a href="?category=Saúde e Bem-estar" class="category-btn {% if request.GET.category == 'Saúde e Bem-estar' %}active{% endif %}">
+                    Saúde
+                </a>
+                
+                <a href="?category=Consultoria Jurídica" class="category-btn {% if request.GET.category == 'Consultoria Jurídica' %}active{% endif %}">
+                    Jurídico
+                </a>
+                
+                <a href="?category=Marketing Digital" class="category-btn {% if request.GET.category == 'Marketing Digital' %}active{% endif %}">
+                    Marketing
+                </a>
+
+                <a href="?category=Consultoria Financeira" class="category-btn {% if request.GET.category == 'Consultoria Financeira' %}active{% endif %}">
+                    Finanças
+                </a>
             </div>
-            
-            <div class="profession-grid"></div>
         </div>
     </section>
 
@@ -58,37 +82,94 @@
         <div class="container">
             <div class="section-title">
                 <h2>Como Funciona</h2>
-                <p>Três simples passos para conectar-se com o especialista ideal para suas necessidades.</p>
+                <p>Três simples passos para conectar-se com o especialista ideal.</p>
             </div>
             
             <div class="steps-container">
                 <div class="step">
                     <div class="step-number">1</div>
                     <h3>Escolha seu Especialista</h3>
-                    <p>Navegue por nosso diretório de profissionais e selecione aquele que melhor se adapta às suas necessidades.</p>
+                    <p>Navegue por nosso diretório e selecione o profissional ideal.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
                     <h3>Agende sua Consulta</h3>
-                    <p>Escolha uma data e horário convenientes para sua consulta online através de nossa plataforma.</p>
+                    <p>Entre em contato diretamente pelo WhatsApp do profissional.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <h3>Conecte-se Online</h3>
-                    <p>Participe da sessão de consultoria via videochamada e receba orientação especializada.</p>
+                    <p>Combine a plataforma de vídeo e realize sua consultoria.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="experts" id="experts">
+    <section class="experts" id="experts" style="background-color: #f8fbff; padding: 80px 0;">
         <div class="container">
             <div class="section-title">
-                <h2>Nossos Especialistas em Destaque</h2>
-                <p>Conheça alguns dos profissionais altamente qualificados que fazem parte da nossa rede.</p>
+                <h2>Nossos Especialistas</h2>
+                <p>Conheça alguns dos profissionais altamente qualificados da nossa rede.</p>
             </div>
             
-            <div class="experts-grid"></div>
+            <div class="specialists-grid">
+                
+                {% for spec in specialists %}
+                <div class="expert-card">
+                    
+                    <a href="{% url 'specialist_detail' spec.id %}" style="text-decoration: none; color: inherit;">
+                        
+                        <div class="card-header">
+                            {% if spec.photo %}
+                                <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
+                            {% else %}
+                                <div class="no-photo">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                            <div class="rating-badge">
+                                <i class="fas fa-star"></i> 5.0
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h3 onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#2c3e50'" style="transition: 0.2s;">
+                                {{ spec.user.first_name }}
+                            </h3>
+                            
+                            <span class="spec-profession">{{ spec.get_profession_display }}</span>
+                            
+                            <p class="spec-description">
+                                {{ spec.description|default:"Profissional disponível para consultoria online."|truncatechars:70 }}
+                            </p>
+                    </a> 
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+                        <div class="card-footer">
+                            <div class="spec-price">
+                                <small>Consulta</small>
+                                <strong>R$ {{ spec.price }}</strong>
+                            </div>
+                            
+                            {% if spec.phone %}
+                                <a href="https://wa.me/55{{ spec.clean_phone }}?text=Olá, vi seu perfil no Conektei e gostaria de agendar uma consulta." target="_blank" class="btn-schedule">
+                                    Agendar <i class="fab fa-whatsapp"></i>
+                                </a>
+                            {% else %}
+                                <button class="btn-schedule disabled" disabled>Indisponível</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+                        <p>Nenhum especialista encontrado nesta categoria.</p>
+                        <a href="{% url 'home' %}" class="btn btn-outline" style="margin-top: 10px;">Ver todos</a>
+                    </div>
+                {% endfor %}
+
+            </div>
         </div>
     </section>
 
@@ -96,7 +177,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>Planos de Consultoria</h2>
-                <p>Escolha o plano que melhor atende às suas necessidades de consultoria profissional.</p>
+                <p>Escolha o plano que melhor atende às suas necessidades.</p>
             </div>
             
             <div class="pricing-plans">
@@ -108,23 +189,19 @@
                         <li><i class="fas fa-check"></i> 1 hora de consultoria</li>
                         <li><i class="fas fa-check"></i> 1 especialista à sua escolha</li>
                         <li><i class="fas fa-check"></i> Suporte por email por 7 dias</li>
-                        <li><i class="fas fa-check"></i> Material de apoio básico</li>
-                        <li><i class="fas fa-times"></i> Acompanhamento contínuo</li>
                     </ul>
                     <a href="#contact" class="btn btn-outline">Escolher Plano</a>
                 </div>
                 
                 <div class="pricing-card popular">
                     <div class="popular-badge">Mais Popular</div>
-                    <h3>Pacote Mensal</h3>
-                    <div class="price">R$ 599<span>,90</span></div>
+                    <h3>Pacote Anual</h3>
+                    <div class="price">R$ 149<span>,90</span></div>
                     <p class="pricing-period">por mês</p>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check"></i> 4 horas de consultoria</li>
                         <li><i class="fas fa-check"></i> Até 3 especialistas diferentes</li>
                         <li><i class="fas fa-check"></i> Suporte prioritário</li>
-                        <li><i class="fas fa-check"></i> Material de apoio completo</li>
-                        <li><i class="fas fa-check"></i> Acompanhamento por 30 dias</li>
                     </ul>
                     <a href="#contact" class="btn">Escolher Plano</a>
                 </div>
@@ -135,10 +212,8 @@
                     <p class="pricing-period">por mês</p>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check"></i> 10 horas de consultoria</li>
-                        <li><i class="fas fa-check"></i> Até 5 especialistas diferentes</li>
+                        <li><i class="fas fa-check"></i> Até 5 especialistas</li>
                         <li><i class="fas fa-check"></i> Suporte dedicado 24/7</li>
-                        <li><i class="fas fa-check"></i> Material personalizado</li>
-                        <li><i class="fas fa-check"></i> Relatórios mensais</li>
                     </ul>
                     <a href="#contact" class="btn btn-outline">Escolher Plano</a>
                 </div>
@@ -150,19 +225,16 @@
         <div class="container">
             <div class="section-title">
                 <h2>Entre em Contato</h2>
-                <p>Agende sua consulta ou tire suas dúvidas sobre nossos serviços.</p>
+                <p>Agende sua consulta ou tire suas dúvidas.</p>
             </div>
             
             <div class="contact-container">
                 <div class="contact-info">
                     <h3>Pronto para transformar sua carreira ou negócio?</h3>
-                    <p>Nossa equipe está pronta para ajudá-lo a encontrar o especialista perfeito para suas necessidades.</p>
-                    
+                    <p>Nossa equipe está pronta para ajudá-lo a encontrar o especialista perfeito.</p>
                     <div class="contact-details">
                         <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
                             <div class="contact-text">
                                 <h4>Email</h4>
                                 <p>contato@conektei.com.br</p>
@@ -197,86 +269,117 @@
         </div>
     </section>
 
-    <script>
-        // Dados das profissões
-        const professions = [
-            { id: 1, category: "business", icon: "fas fa-chart-line", title: "Consultor Financeiro", description: "Orientação para investimentos e planejamento." },
-            { id: 2, category: "business", icon: "fas fa-briefcase", title: "Coach de Carreira", description: "Desenvolvimento profissional e transição de carreira." },
-            { id: 3, category: "tech", icon: "fas fa-code", title: "Desenvolvedor de Software", description: "Consultoria em desenvolvimento de aplicações." },
-            { id: 4, category: "tech", icon: "fas fa-shield-alt", title: "Especialista em Cybersecurity", description: "Proteção de dados e segurança da informação." },
-            { id: 5, category: "health", icon: "fas fa-heartbeat", title: "Nutricionista", description: "Planejamento alimentar personalizado." },
-            { id: 6, category: "legal", icon: "fas fa-gavel", title: "Advogado", description: "Consultoria jurídica empresarial e contratos." },
-            { id: 9, category: "creative", icon: "fas fa-paint-brush", title: "Designer Gráfico", description: "Criação de identidade visual e branding." },
-            { id: 10, category: "creative", icon: "fas fa-bullhorn", title: "Especialista em Marketing", description: "Estratégias de marketing digital." }
-        ];
-
-        // Dados dos especialistas
-        const experts = [
-            { id: 1, name: "Dr. Carlos Silva", specialty: "Advogado Corporativo", rating: 4.9, image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "15 anos de experiência.", tags: ["Direito", "Contratos"] },
-            { id: 2, name: "Dra. Mariana Costa", specialty: "Psicóloga Clínica", rating: 4.8, image: "https://images.unsplash.com/photo-1594824434340-7e7dfc37cabb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Especialista em TCC.", tags: ["TCC", "Saúde"] },
-            { id: 3, name: "Ricardo Mendes", specialty: "Consultor Financeiro", rating: 4.9, image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Especialista em investimentos.", tags: ["Finanças"] },
-            { id: 4, name: "Ana Beatriz", specialty: "Marketing Digital", rating: 4.7, image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", description: "Estratégias de crescimento.", tags: ["SEO", "Branding"] }
-        ];
-
-        // Selecionar elementos
-        const professionGrid = document.querySelector('.profession-grid');
-        const expertsGrid = document.querySelector('.experts-grid');
-        const categoryBtns = document.querySelectorAll('.category-btn');
-
-        // Função para mostrar profissões
-        function renderProfessions(category) {
-            professionGrid.innerHTML = '';
-            const filtered = category === 'all' ? professions : professions.filter(p => p.category === category);
-            
-            filtered.forEach(prof => {
-                const card = `
-                    <div class="profession-card">
-                        <div class="profession-icon"><i class="${prof.icon}"></i></div>
-                        <h3>${prof.title}</h3>
-                        <p>${prof.description}</p>
-                        <a href="#contact" class="btn btn-outline">Agendar</a>
-                    </div>`;
-                professionGrid.innerHTML += card;
-            });
+    <style>
+        /* BARRA DE BUSCA */
+        .hero-search {
+            margin: 30px 0;
+            max-width: 500px;
         }
 
-        // Função para mostrar especialistas
-        function renderExperts() {
-            expertsGrid.innerHTML = '';
-            experts.forEach(exp => {
-                const card = `
-                    <div class="expert-card">
-                        <div class="expert-image">
-                            <img src="${exp.image}" alt="${exp.name}">
-                            <div class="expert-rating"><i class="fas fa-star"></i> ${exp.rating}</div>
-                        </div>
-                        <div class="expert-info">
-                            <h3>${exp.name}</h3>
-                            <span class="expert-specialty">${exp.specialty}</span>
-                            <p class="expert-description">${exp.description}</p>
-                            <div class="expert-tags">
-                                ${exp.tags.map(t => `<span class="expert-tag">${t}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>`;
-                expertsGrid.innerHTML += card;
-            });
+        .input-group-hero {
+            display: flex;
+            background: white;
+            padding: 5px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            align-items: center;
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProfessions('all');
-            renderExperts();
-        });
+        .input-group-hero i { padding-left: 20px; color: #999; }
 
-        // Filtros
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderProfessions(btn.dataset.category);
-            });
-        });
-    </script>
+        .input-group-hero input {
+            border: none; padding: 15px; flex-grow: 1;
+            outline: none; border-radius: 0; font-size: 1rem;
+        }
 
+        .input-group-hero button {
+            background: #0056b3; color: white; border: none;
+            padding: 12px 30px; border-radius: 40px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        .input-group-hero button:hover { background: #004494; }
+
+        /* CATEGORIAS COMO LINKS */
+        .category-btn {
+            text-decoration: none; display: inline-block; cursor: pointer;
+        }
+
+        /* CARDS DOS ESPECIALISTAS (Flexbox) */
+        .specialists-grid {
+            display: flex; flex-wrap: wrap; gap: 30px;
+            justify-content: center; margin-top: 40px;
+        }
+
+        .expert-card {
+            width: 100%; max-width: 350px; background: white;
+            border-radius: 16px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; flex-direction: column;
+        }
+
+        .expert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            height: 250px; position: relative; background: #eef2f5;
+        }
+        .card-header img { width: 100%; height: 100%; object-fit: cover; }
+
+        .no-photo {
+            width: 100%; height: 100%; display: flex;
+            align-items: center; justify-content: center;
+            color: #bdc3c7; font-size: 3rem;
+        }
+
+        .rating-badge {
+            position: absolute; bottom: 15px; right: 15px;
+            background: white; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: bold; color: #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 5px;
+        }
+        .rating-badge i { color: #f1c40f; }
+
+        .card-body {
+            padding: 25px; flex-grow: 1; display: flex; flex-direction: column;
+        }
+
+        .card-body h3 {
+            font-size: 1.25rem; color: #2c3e50; margin-bottom: 5px;
+        }
+
+        .spec-profession {
+            color: #0056b3; font-weight: 600; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .spec-description {
+            color: #7f8c8d; font-size: 0.95rem; line-height: 1.6;
+            margin-top: 12px; flex-grow: 1; 
+        }
+
+        .card-footer {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .spec-price { display: flex; flex-direction: column; }
+        .spec-price small { font-size: 0.75rem; color: #95a5a6; text-transform: uppercase; }
+        .spec-price strong { font-size: 1.2rem; color: #2c3e50; }
+
+        .btn-schedule {
+            background-color: #0056b3; color: white; padding: 10px 20px;
+            border-radius: 8px; text-decoration: none; font-weight: 500;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-schedule:hover { background-color: #004494; transform: scale(1.05); }
+        .btn-schedule.disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+
+        .empty-state {
+            width: 100%; text-align: center; padding: 50px; color: #95a5a6;
+        }
+        .empty-state i { font-size: 3rem; color: #ddd; margin-bottom: 15px; }
+    </style>
 {% endblock %}
