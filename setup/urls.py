@@ -15,8 +15,12 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     path('account/delete/', views.delete_account_view, name='delete_account'),
     
-    # NOVA ROTA: Detalhes do Especialista (O <int:id> pega o ID do banco)
+    # Rotas de Especialista e Planos
     path('specialist/<int:id>/', views.specialist_detail_view, name='specialist_detail'),
+    path('plan/subscribe/<str:plan_type>/', views.subscribe_plan_view, name='subscribe_plan'),
+
+    # --- NOVA ROTA: Escolha de Acesso (Assinante vs Avulso) ---
+    path('access/choose/<str:choice>/', views.choose_access_view, name='choose_access'),
 ]
 
 if settings.DEBUG:

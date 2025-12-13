@@ -1,140 +1,91 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ spec.user.first_name }} - Especialista{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+<div class="container" style="padding-top: 120px; padding-bottom: 50px;">
     
-    <a href="{% url 'home' %}" style="color: #666; text-decoration: none; margin-bottom: 20px; display: inline-block;">
-        <i class="fas fa-arrow-left"></i> Voltar para a lista
-    </a>
+    <div style="margin-bottom: 30px;">
+        <h1 style="color: #333;">Painel do Especialista</h1>
+        <p style="color: #666;">Bem-vindo, {{ user.first_name }}! Aqui está o resumo do seu dia.</p>
+    </div>
 
-    <div class="profile-layout">
-        
-        <aside class="profile-sidebar">
-            <div class="profile-card-detail">
-                <div class="profile-image-detail">
-                    {% if spec.photo %}
-                        <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
-                    {% else %}
-                        <div class="no-photo-detail"><i class="fas fa-user"></i></div>
-                    {% endif %}
-                </div>
-                
-                <h1 style="font-size: 1.5rem; margin-bottom: 5px; color: #333;">{{ spec.user.first_name }}</h1>
-                <p style="color: #0056b3; font-weight: 600; margin-bottom: 20px;">{{ spec.get_profession_display }}</p>
-                
-                <div class="rating-box">
-                    <i class="fas fa-star"></i> 5.0 <span>(Novo)</span>
-                </div>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
 
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-                <div class="price-box">
-                    <small>Valor da Consulta</small>
-                    <strong>R$ {{ spec.price }}</strong>
-                </div>
-
-                {% if spec.phone %}
-                    <a href="https://wa.me/55{{ spec.clean_phone }}?text=Olá, vi seu perfil no Conektei e gostaria de mais informações." target="_blank" class="btn-whatsapp">
-                        <i class="fab fa-whatsapp"></i> Agendar Agora
-                    </a>
+        <div style="flex: 0 0 320px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;">
+            
+            <div style="width: 150px; height: 150px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 4px solid #f4f7f6;">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="Foto de {{ user.first_name }}" style="width: 100%; height: 100%; object-fit: cover;">
                 {% else %}
-                    <button disabled class="btn-disabled" style="width: 100%; padding: 15px; border: none; border-radius: 10px; background: #ccc; color: white; font-weight: bold; cursor: not-allowed;">Indisponível</button>
+                    <div style="width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
                 {% endif %}
             </div>
-        </aside>
 
-        <main class="profile-content">
-            <div class="content-box">
-                <h2>Sobre o Especialista</h2>
-                <p class="bio-text">
-                    {{ spec.description|default:"Este especialista ainda não adicionou uma descrição detalhada."|linebreaks }}
-                </p>
+            <h2 style="margin-bottom: 5px; font-size: 1.5rem;">{{ user.first_name }}</h2>
+            <p style="color: #666; font-weight: 500; margin-bottom: 15px;">
+                {{ user.profile.profession|default:"Profissão não definida" }}
+            </p>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <i class="fas fa-video"></i>
-                        <div>
-                            <strong>Atendimento Online</strong>
-                            <span>Via Google Meet ou Zoom</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-clock"></i>
-                        <div>
-                            <strong>Duração Média</strong>
-                            <span>50 minutos</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-language"></i>
-                        <div>
-                            <strong>Idiomas</strong>
-                            <span>Português</span>
-                        </div>
-                    </div>
+            <div style="background: #eef6fc; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+                <span style="color: #0056b3; font-weight: bold;">
+                    {% if user.profile.price %}
+                        R$ {{ user.profile.price }} / consulta
+                    {% else %}
+                        Preço não definido
+                    {% endif %}
+                </span>
+            </div>
+
+            <a href="{% url 'edit_profile' %}" class="btn" style="width: 100%; display: inline-block; background-color: #0d6efd; color: white; padding: 10px; border-radius: 5px; text-decoration: none;">
+                <i class="fas fa-pen"></i> Editar Perfil
+            </a>
+
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2rem;">Disponibilidade</h3>
+                    <span style="font-size: 0.9rem; color: #666;">Ficar online para receber chamadas agora?</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: bold; color: #198754;">ONLINE</span>
+                    <label style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #198754; transition: .4s; border-radius: 34px;"></span>
+                        <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; transform: translateX(22px);"></span>
+                    </label>
                 </div>
             </div>
-        </main>
 
-    </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                
+                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #0d6efd;">
+                    <span style="color: #666; font-size: 0.9rem;">Ganhos (Mês)</span>
+                    <h3 style="margin: 5px 0 0; color: #333;">R$ 0,00</h3>
+                </div>
+
+                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #198754;">
+                    <span style="color: #666; font-size: 0.9rem;">Consultas Hoje</span>
+                    <h3 style="margin: 5px 0 0; color: #333;">0</h3>
+                </div>
+
+                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ffc107;">
+                    <span style="color: #666; font-size: 0.9rem;">Sua Nota</span>
+                    <h3 style="margin: 5px 0 0; color: #333;">5.0 ★</h3>
+                </div>
+
+            </div>
+
+            <div style="background: white; border: 1px dashed #ccc; border-radius: 12px; padding: 40px; text-align: center; color: #999;">
+                <p>📅 Nenhuma consulta agendada para hoje.</p>
+                <button class="btn" style="border: 1px solid #ddd; padding: 5px 15px; margin-top: 10px; border-radius: 5px;">Ver agenda completa</button>
+            </div>
+
+        </div>
+        </div>
 </div>
-
-<style>
-    .profile-layout {
-        display: grid;
-        grid-template-columns: 350px 1fr;
-        gap: 40px;
-    }
-
-    @media (max-width: 768px) {
-        .profile-layout { grid-template-columns: 1fr; }
-    }
-
-    .profile-card-detail, .content-box {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-
-    .profile-sidebar { text-align: center; }
-
-    .profile-image-detail {
-        width: 150px; height: 150px; margin: 0 auto 20px;
-        border-radius: 50%; overflow: hidden; border: 5px solid #f4f7f6;
-    }
-    .profile-image-detail img { width: 100%; height: 100%; object-fit: cover; }
-    .no-photo-detail { 
-        width: 100%; height: 100%; background: #ddd; 
-        display: flex; align-items: center; justify-content: center; 
-        font-size: 3rem; color: #999; 
-    }
-
-    .rating-box {
-        background: #fff8e1; color: #f1c40f; padding: 5px 15px;
-        border-radius: 20px; display: inline-block; font-weight: bold;
-    }
-    .rating-box span { color: #666; font-weight: normal; font-size: 0.9rem; }
-
-    .price-box { margin-bottom: 20px; }
-    .price-box small { display: block; color: #999; text-transform: uppercase; font-size: 0.8rem; }
-    .price-box strong { font-size: 2rem; color: #333; }
-
-    .btn-whatsapp {
-        display: block; background: #25D366; color: white;
-        padding: 15px; border-radius: 10px; text-decoration: none;
-        font-weight: bold; transition: 0.3s;
-    }
-    .btn-whatsapp:hover { background: #1ebc57; transform: translateY(-2px); }
-
-    .content-box h2 { color: #0056b3; margin-bottom: 20px; border-bottom: 2px solid #eef6fc; padding-bottom: 10px; }
-    .bio-text { font-size: 1.1rem; line-height: 1.8; color: #555; margin-bottom: 40px; }
-
-    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .info-item { display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 10px; }
-    .info-item i { font-size: 1.5rem; color: #0056b3; }
-    .info-item div { display: flex; flex-direction: column; }
-</style>
 {% endblock %}

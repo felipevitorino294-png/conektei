@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Escolha seu Plano{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+    <div class="section-title">
+        <h2>Escolha o Plano Ideal</h2>
+        <p>Desbloqueie acesso ilimitado aos nossos especialistas.</p>
+    </div>
+    
+    <div class="pricing-plans">
+        <div class="pricing-card">
+            <h3>Básico</h3>
+            <div class="price">R$ 29<span>,90</span></div>
+            <p class="pricing-period">mensal</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> Acesso aos especialistas</li>
+                <li><i class="fas fa-check"></i> Agendamento liberado</li>
+            </ul>
+            <a href="{% url 'checkout' 'Basico' '29.90' %}" class="btn btn-outline">Selecionar</a>
+        </div>
+        
+        <div class="pricing-card popular">
+            <div class="popular-badge">Recomendado</div>
+            <h3>Premium</h3>
+            <div class="price">R$ 59<span>,90</span></div>
+            <p class="pricing-period">trimestral</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> Tudo do Básico</li>
+                <li><i class="fas fa-check"></i> Suporte Prioritário</li>
+            </ul>
+            <a href="{% url 'checkout' 'Premium' '59.90' %}" class="btn">Selecionar</a>
+        </div>
+        
+        <div class="pricing-card">
+            <h3>Empresarial</h3>
+            <div class="price">R$ 149<span>,90</span></div>
+            <p class="pricing-period">anual</p>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> Múltiplos usuários</li>
+                <li><i class="fas fa-check"></i> Gerente de conta</li>
+            </ul>
+            <a href="{% url 'checkout' 'Empresarial' '149.90' %}" class="btn btn-outline">Selecionar</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Reutilizando estilos da Home para consistência */
+    .pricing-plans { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+    .pricing-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 300px; position: relative; border: 1px solid #eee; transition: 0.3s; }
+    .pricing-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+    .pricing-card.popular { border: 2px solid #0056b3; transform: scale(1.05); }
+    .pricing-card.popular:hover { transform: scale(1.05) translateY(-10px); }
+    .popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #0056b3; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+    .price { font-size: 2.5rem; color: #2c3e50; font-weight: bold; margin: 20px 0; }
+    .pricing-features { list-style: none; padding: 0; margin-bottom: 30px; text-align: left; }
+    .pricing-features li { margin-bottom: 10px; color: #666; }
+    .pricing-features i { color: #27ae60; margin-right: 10px; }
+    .btn { background: #0056b3; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
+    .btn-outline { background: transparent; border: 2px solid #0056b3; color: #0056b3; }
+    .btn-outline:hover { background: #0056b3; color: white; }
+</style>
+{% endblock %}

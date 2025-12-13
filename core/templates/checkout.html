@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Pagamento Seguro{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-wrapper">
+        
+        <div class="order-summary">
+            <h3>Resumo do Pedido</h3>
+            <div class="plan-info">
+                <span>Plano Selecionado</span>
+                <strong>{{ plan_type }}</strong>
+            </div>
+            <div class="plan-total">
+                <span>Total a Pagar</span>
+                <strong class="total-price">R$ {{ price }}</strong>
+            </div>
+            <ul class="security-badges">
+                <li><i class="fas fa-lock"></i> Pagamento 100% Seguro</li>
+                <li><i class="fas fa-shield-alt"></i> Dados Criptografados</li>
+            </ul>
+        </div>
+
+        <div class="payment-form">
+            <h2>Dados de Pagamento</h2>
+            
+            <div class="payment-methods">
+                <button class="method-btn active" onclick="switchMethod('card')">
+                    <i class="far fa-credit-card"></i> Cartão de Crédito
+                </button>
+                <button class="method-btn" onclick="switchMethod('pix')">
+                    <i class="fab fa-pix"></i> PIX
+                </button>
+            </div>
+
+            <form action="{% url 'process_payment' %}" method="POST" id="checkoutForm" onsubmit="return simulateLoading(event)">
+                {% csrf_token %}
+                <input type="hidden" name="plan_type" value="{{ plan_type }}">
+
+                <div id="card-section">
+                    <div class="form-group">
+                        <label>Número do Cartão</label>
+                        <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome no Cartão</label>
+                        <input type="text" placeholder="Como impresso no cartão" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Validade</label>
+                            <input type="text" placeholder="MM/AA" maxlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" placeholder="123" maxlength="3" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pix-section" style="display: none; text-align: center;">
+                    <p>Escaneie o QR Code abaixo para pagar:</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code Fake" style="width: 150px; margin: 20px 0;">
+                    <p style="color: #666; font-size: 0.9rem;">O pagamento será aprovado automaticamente após o scan.</p>
+                </div>
+
+                <button type="submit" class="btn-pay" id="payButton">
+                    Confirmar Pagamento
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .checkout-container { padding: 120px 20px 80px; background: #f4f7f6; min-height: 100vh; }
+    .checkout-wrapper { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
+    
+    @media(max-width: 768px) { .checkout-wrapper { grid-template-columns: 1fr; } }
+
+    /* Resumo */
+    .order-summary { background: #0056b3; color: white; padding: 30px; border-radius: 15px; height: fit-content; }
+    .plan-info, .plan-total { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .total-price { font-size: 1.5rem; color: #ffdd57; }
+    .security-badges { list-style: none; padding: 0; margin-top: 30px; font-size: 0.9rem; opacity: 0.9; }
+    .security-badges li { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+
+    /* Formulário */
+    .payment-form { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .payment-methods { display: flex; gap: 10px; margin-bottom: 30px; }
+    .method-btn { flex: 1; padding: 10px; border: 2px solid #eee; background: white; cursor: pointer; border-radius: 8px; font-weight: bold; color: #555; transition: 0.3s; }
+    .method-btn.active { border-color: #0056b3; color: #0056b3; background: #eef6fc; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+    .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    .form-row { display: flex; gap: 20px; }
+
+    .btn-pay { width: 100%; background: #27ae60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+    .btn-pay:hover { background: #219150; }
+</style>
+
+<script>
+    function switchMethod(method) {
+        const cardSection = document.getElementById('card-section');
+        const pixSection = document.getElementById('pix-section');
+        const btns = document.querySelectorAll('.method-btn');
+        const inputs = cardSection.querySelectorAll('input');
+
+        if (method === 'card') {
+            cardSection.style.display = 'block';
+            pixSection.style.display = 'none';
+            btns[0].classList.add('active');
+            btns[1].classList.remove('active');
+            inputs.forEach(input => input.required = true);
+        } else {
+            cardSection.style.display = 'none';
+            pixSection.style.display = 'block';
+            btns[0].classList.remove('active');
+            btns[1].classList.add('active');
+            inputs.forEach(input => input.required = false);
+        }
+    }
+
+    function simulateLoading(event) {
+        const btn = document.getElementById('payButton');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+        return true; 
+    }
+</script>
+{% endblock %}

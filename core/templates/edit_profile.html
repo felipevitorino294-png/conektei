@@ -1,71 +1,145 @@
 {% extends 'base.html' %}
 
+{% block title %}Editar Perfil{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 600px; padding-top: 150px; padding-bottom: 50px;">
-    
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-        <h2 style="color: #0056b3; margin-bottom: 20px; text-align: center;">Editar Meu Perfil</h2>
-        
-        <form method="POST" enctype="multipart/form-data">
+<div class="edit-profile-container" style="padding: 120px 20px;">
+    <div class="form-box" style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+        <h2 style="color: #0056b3; margin-bottom: 30px; text-align: center;">Editar Meu Perfil</h2>
+
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
-            {% for field in form %}
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">
-                    {{ field.label }}
-                </label>
-                {{ field }} 
-                {% if field.help_text %}
-                    <small style="color: #666; display: block; margin-top: 5px;">{{ field.help_text }}</small>
-                {% endif %}
+
+            <div class="form-group-custom">
+                <label for="{{ form.profession.id_for_label }}">{{ form.profession.label }}</label>
+                {{ form.profession }}
             </div>
-            {% endfor %}
 
-            <button type="submit" class="btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1.1rem;">Salvar Alterações</button>
-            <a href="{% url 'dashboard' %}" style="display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none;">Cancelar</a>
+            <div class="form-group-custom">
+                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+
+             <div class="form-group-custom">
+                <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                {{ form.price }}
+            </div>
+
+             <div class="form-group-custom">
+                <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                {{ form.phone }}
+            </div>
+
+            <div class="form-group-custom photo-upload-group">
+                <label>Foto de Perfil</label>
+                
+                {% if user.profile.photo %}
+                    <div class="current-photo-preview">
+                        <img src="{{ user.profile.photo.url }}" alt="Foto atual">
+                        <span>Foto atual</span>
+                    </div>
+                {% endif %}
+
+                <div class="file-upload-wrapper">
+                     {{ form.photo }} 
+                    
+                    <label for="id_photo" class="btn-upload-custom">
+                        <i class="fas fa-camera"></i> Escolher Nova Foto
+                    </label>
+                    <span id="file-chosen">Nenhum arquivo selecionado</span>
+                </div>
+            </div>
+            <div class="form-actions" style="margin-top: 30px; display: flex; gap: 15px;">
+                 <button type="submit" class="btn-save" style="flex: 1; background: #0056b3; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;">Salvar Alterações</button>
+                 <a href="{% url 'dashboard' %}" class="btn-cancel" style="flex: 1; text-align: center; background: #eee; color: #333; text-decoration: none; padding: 15px; border-radius: 10px; font-weight: bold;">Cancelar</a>
+            </div>
         </form>
-
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0 30px 0;">
-        
-        <div style="text-align: center;">
-            <h3 style="color: #ff4d4d; font-size: 1.1rem; margin-bottom: 10px;">Zona de Perigo</h3>
-            <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Deseja excluir sua conta permanentemente?</p>
-            
-            <form action="{% url 'delete_account' %}" method="POST" onsubmit="return confirm('Tem certeza absoluta? Essa ação não pode ser desfeita e seu perfil sumirá da Home.');">
-                {% csrf_token %}
-                <button type="submit" style="background: white; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s;" onmouseover="this.style.background='#ff4d4d'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#ff4d4d'">
-                    <i class="fas fa-trash"></i> Excluir minha conta
-                </button>
-            </form>
-        </div>
-
     </div>
 </div>
 
 <style>
-    /* Estilização dos campos (Input, Textarea, Select) */
-    input[type="text"], input[type="number"], textarea, input[type="file"], select {
+    .form-group-custom {
+        margin-bottom: 20px;
+    }
+    .form-group-custom label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+    .form-group-custom input[type="text"],
+    .form-group-custom input[type="number"],
+    .form-group-custom select,
+    .form-group-custom textarea {
         width: 100%;
         padding: 12px;
         border: 1px solid #ddd;
         border-radius: 8px;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-        transition: 0.3s;
+        font-family: inherit;
     }
-    
-    /* Efeito de foco */
-    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
-        background-color: #fff;
-        border-color: #0056b3;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+    .form-group-custom textarea {
+        resize: vertical;
+        height: 100px;
     }
 
-    /* Ajuste para o campo de upload de arquivo */
-    input[type="file"] {
-        background: white;
+    /* --- CSS DO UPLOAD DE FOTO --- */
+    /* Esconde o input feio original do Django/Navegador */
+    input[type="file"]#id_photo {
+        display: none;
+    }
+    /* Esconde os textos extras que o Django coloca (Currently, Clear) */
+    .photo-upload-group a, .photo-upload-group label[for*="clear"] {
+        display: none;
+    }
+
+    /* Estilo do nosso botão personalizado */
+    .btn-upload-custom {
+        display: inline-block;
+        background-color: #eef2f5;
+        color: #0056b3;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+        border: 2px dashed #cbd5e0;
+        text-align: center;
+    }
+    .btn-upload-custom:hover {
+        background-color: #e0e6ed;
+        border-color: #0056b3;
+    }
+    .btn-upload-custom i { margin-right: 8px; }
+
+    #file-chosen {
+        margin-left: 15px;
+        font-size: 0.9rem;
+        color: #7f8c8d;
+    }
+    .current-photo-preview {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
         padding: 10px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    .current-photo-preview img {
+        width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 </style>
+
+<script>
+    const actualBtn = document.getElementById('id_photo');
+    const fileChosen = document.getElementById('file-chosen');
+
+    actualBtn.addEventListener('change', function(){
+      if(this.files.length > 0) {
+          fileChosen.textContent = this.files[0].name;
+      } else {
+          fileChosen.textContent = "Nenhum arquivo selecionado";
+      }
+    })
+</script>
 {% endblock %}

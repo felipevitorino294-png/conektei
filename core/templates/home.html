@@ -51,29 +51,12 @@
             </div>
             
             <div class="profession-categories">
-                <a href="{% url 'home' %}" class="category-btn {% if not request.GET.category %}active{% endif %}">
-                    Todas
-                </a>
-
-                <a href="?category=Tecnologia e TI" class="category-btn {% if request.GET.category == 'Tecnologia e TI' %}active{% endif %}">
-                    Tecnologia
-                </a>
-                
-                <a href="?category=Saúde e Bem-estar" class="category-btn {% if request.GET.category == 'Saúde e Bem-estar' %}active{% endif %}">
-                    Saúde
-                </a>
-                
-                <a href="?category=Consultoria Jurídica" class="category-btn {% if request.GET.category == 'Consultoria Jurídica' %}active{% endif %}">
-                    Jurídico
-                </a>
-                
-                <a href="?category=Marketing Digital" class="category-btn {% if request.GET.category == 'Marketing Digital' %}active{% endif %}">
-                    Marketing
-                </a>
-
-                <a href="?category=Consultoria Financeira" class="category-btn {% if request.GET.category == 'Consultoria Financeira' %}active{% endif %}">
-                    Finanças
-                </a>
+                <a href="{% url 'home' %}" class="category-btn {% if not request.GET.category %}active{% endif %}">Todas</a>
+                <a href="?category=Tecnologia e TI" class="category-btn {% if request.GET.category == 'Tecnologia e TI' %}active{% endif %}">Tecnologia</a>
+                <a href="?category=Saúde e Bem-estar" class="category-btn {% if request.GET.category == 'Saúde e Bem-estar' %}active{% endif %}">Saúde</a>
+                <a href="?category=Consultoria Jurídica" class="category-btn {% if request.GET.category == 'Consultoria Jurídica' %}active{% endif %}">Jurídico</a>
+                <a href="?category=Marketing Digital" class="category-btn {% if request.GET.category == 'Marketing Digital' %}active{% endif %}">Marketing</a>
+                <a href="?category=Consultoria Financeira" class="category-btn {% if request.GET.category == 'Consultoria Financeira' %}active{% endif %}">Finanças</a>
             </div>
         </div>
     </section>
@@ -113,32 +96,29 @@
             </div>
             
             <div class="specialists-grid">
-                
                 {% for spec in specialists %}
                 <div class="expert-card">
                     
-                    <a href="{% url 'specialist_detail' spec.id %}" style="text-decoration: none; color: inherit;">
+                    {% if user.is_authenticated and user.profile.has_active_plan %}
+                        <a href="{% url 'specialist_detail' spec.id %}" style="text-decoration: none; color: inherit;">
+                    {% else %}
+                        <a href="#pricing" onclick="alert('Você precisa assinar um plano para ver o perfil completo!');" style="text-decoration: none; color: inherit;">
+                    {% endif %}
                         
                         <div class="card-header">
                             {% if spec.photo %}
                                 <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
                             {% else %}
-                                <div class="no-photo">
-                                    <i class="fas fa-user"></i>
-                                </div>
+                                <div class="no-photo"><i class="fas fa-user"></i></div>
                             {% endif %}
-                            <div class="rating-badge">
-                                <i class="fas fa-star"></i> 5.0
-                            </div>
+                            <div class="rating-badge"><i class="fas fa-star"></i> 5.0</div>
                         </div>
 
                         <div class="card-body">
                             <h3 onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#2c3e50'" style="transition: 0.2s;">
                                 {{ spec.user.first_name }}
                             </h3>
-                            
                             <span class="spec-profession">{{ spec.get_profession_display }}</span>
-                            
                             <p class="spec-description">
                                 {{ spec.description|default:"Profissional disponível para consultoria online."|truncatechars:70 }}
                             </p>
@@ -152,9 +132,21 @@
                             </div>
                             
                             {% if spec.phone %}
-                                <a href="https://wa.me/55{{ spec.clean_phone }}?text=Olá, vi seu perfil no Conektei e gostaria de agendar uma consulta." target="_blank" class="btn-schedule">
-                                    Agendar <i class="fab fa-whatsapp"></i>
-                                </a>
+                                {% if user.is_authenticated %}
+                                    {% if user.profile.has_active_plan %}
+                                        <a href="https://wa.me/55{{ spec.clean_phone }}?text=Olá, vi seu perfil no Conektei..." target="_blank" class="btn-schedule">
+                                            Agendar <i class="fab fa-whatsapp"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="#pricing" class="btn-schedule" style="background-color: #e67e22;">
+                                            <i class="fas fa-lock"></i> Assinar p/ Agendar
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'login' %}" class="btn-schedule" style="background-color: #6c757d;">
+                                        Entrar
+                                    </a>
+                                {% endif %}
                             {% else %}
                                 <button class="btn-schedule disabled" disabled>Indisponível</button>
                             {% endif %}
@@ -168,7 +160,6 @@
                         <a href="{% url 'home' %}" class="btn btn-outline" style="margin-top: 10px;">Ver todos</a>
                     </div>
                 {% endfor %}
-
             </div>
         </div>
     </section>
@@ -182,40 +173,40 @@
             
             <div class="pricing-plans">
                 <div class="pricing-card">
-                    <h3>Consulta Única</h3>
-                    <div class="price">R$ 199<span>,90</span></div>
-                    <p class="pricing-period">por sessão</p>
+                    <h3>Básico</h3>
+                    <div class="price">R$ 29<span>,90</span></div>
+                    <p class="pricing-period">mensal</p>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 1 hora de consultoria</li>
-                        <li><i class="fas fa-check"></i> 1 especialista à sua escolha</li>
-                        <li><i class="fas fa-check"></i> Suporte por email por 7 dias</li>
+                        <li><i class="fas fa-check"></i> Acesso aos especialistas</li>
+                        <li><i class="fas fa-check"></i> Agendamento ilimitado</li>
+                        <li><i class="fas fa-check"></i> Suporte por email</li>
                     </ul>
-                    <a href="#contact" class="btn btn-outline">Escolher Plano</a>
+                    <a href="{% url 'subscribe_plan' 'Basico' %}" class="btn btn-outline" onclick="return confirm('Deseja assinar o Plano Básico?');">Assinar Agora</a>
                 </div>
                 
                 <div class="pricing-card popular">
                     <div class="popular-badge">Mais Popular</div>
-                    <h3>Pacote Anual</h3>
-                    <div class="price">R$ 149<span>,90</span></div>
-                    <p class="pricing-period">por mês</p>
+                    <h3>Premium</h3>
+                    <div class="price">R$ 59<span>,90</span></div>
+                    <p class="pricing-period">trimestral</p>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 4 horas de consultoria</li>
-                        <li><i class="fas fa-check"></i> Até 3 especialistas diferentes</li>
+                        <li><i class="fas fa-check"></i> Tudo do Básico</li>
                         <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                        <li><i class="fas fa-check"></i> Conteúdo exclusivo</li>
                     </ul>
-                    <a href="#contact" class="btn">Escolher Plano</a>
+                    <a href="{% url 'subscribe_plan' 'Premium' %}" class="btn" onclick="return confirm('Deseja assinar o Plano Premium?');">Assinar Agora</a>
                 </div>
                 
                 <div class="pricing-card">
-                    <h3>Pacote Empresarial</h3>
-                    <div class="price">R$ 1.499<span>,90</span></div>
-                    <p class="pricing-period">por mês</p>
+                    <h3>Empresarial</h3>
+                    <div class="price">R$ 149<span>,90</span></div>
+                    <p class="pricing-period">anual</p>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 10 horas de consultoria</li>
-                        <li><i class="fas fa-check"></i> Até 5 especialistas</li>
-                        <li><i class="fas fa-check"></i> Suporte dedicado 24/7</li>
+                        <li><i class="fas fa-check"></i> Múltiplos usuários</li>
+                        <li><i class="fas fa-check"></i> Relatórios mensais</li>
+                        <li><i class="fas fa-check"></i> Gerente de conta</li>
                     </ul>
-                    <a href="#contact" class="btn btn-outline">Escolher Plano</a>
+                    <a href="{% url 'subscribe_plan' 'Empresarial' %}" class="btn btn-outline" onclick="return confirm('Deseja assinar o Plano Empresarial?');">Assinar Agora</a>
                 </div>
             </div>
         </div>
@@ -225,13 +216,13 @@
         <div class="container">
             <div class="section-title">
                 <h2>Entre em Contato</h2>
-                <p>Agende sua consulta ou tire suas dúvidas.</p>
+                <p>Tire suas dúvidas conosco.</p>
             </div>
             
             <div class="contact-container">
                 <div class="contact-info">
-                    <h3>Pronto para transformar sua carreira ou negócio?</h3>
-                    <p>Nossa equipe está pronta para ajudá-lo a encontrar o especialista perfeito.</p>
+                    <h3>Pronto para transformar sua carreira?</h3>
+                    <p>Nossa equipe está pronta para ajudá-lo.</p>
                     <div class="contact-details">
                         <div class="contact-item">
                             <div class="contact-icon"><i class="fas fa-envelope"></i></div>
@@ -253,16 +244,7 @@
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" required>
                         </div>
-                        <div class="form-group">
-                            <label for="profession">Área de Interesse</label>
-                            <select id="profession" name="profession" required>
-                                <option value="">Selecione uma área</option>
-                                <option value="advogado">Consultoria Jurídica</option>
-                                <option value="marketing">Marketing Digital</option>
-                                <option value="ti">Tecnologia da Informação</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn" style="width: 100%;">Agendar Consulta</button>
+                        <button type="submit" class="btn" style="width: 100%;">Enviar Mensagem</button>
                     </form>
                 </div>
             </div>
@@ -270,116 +252,43 @@
     </section>
 
     <style>
-        /* BARRA DE BUSCA */
-        .hero-search {
-            margin: 30px 0;
-            max-width: 500px;
-        }
-
-        .input-group-hero {
-            display: flex;
-            background: white;
-            padding: 5px;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            align-items: center;
-        }
-
+        /* (Estilos mantidos das versões anteriores) */
+        .hero-search { margin: 30px 0; max-width: 500px; }
+        .input-group-hero { display: flex; background: white; padding: 5px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); align-items: center; }
         .input-group-hero i { padding-left: 20px; color: #999; }
-
-        .input-group-hero input {
-            border: none; padding: 15px; flex-grow: 1;
-            outline: none; border-radius: 0; font-size: 1rem;
-        }
-
-        .input-group-hero button {
-            background: #0056b3; color: white; border: none;
-            padding: 12px 30px; border-radius: 40px; font-weight: bold;
-            cursor: pointer; transition: 0.3s;
-        }
+        .input-group-hero input { border: none; padding: 15px; flex-grow: 1; outline: none; border-radius: 0; font-size: 1rem; }
+        .input-group-hero button { background: #0056b3; color: white; border: none; padding: 12px 30px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .input-group-hero button:hover { background: #004494; }
-
-        /* CATEGORIAS COMO LINKS */
-        .category-btn {
-            text-decoration: none; display: inline-block; cursor: pointer;
-        }
-
-        /* CARDS DOS ESPECIALISTAS (Flexbox) */
-        .specialists-grid {
-            display: flex; flex-wrap: wrap; gap: 30px;
-            justify-content: center; margin-top: 40px;
-        }
-
-        .expert-card {
-            width: 100%; max-width: 350px; background: white;
-            border-radius: 16px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex; flex-direction: column;
-        }
-
-        .expert-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            height: 250px; position: relative; background: #eef2f5;
-        }
+        .category-btn { text-decoration: none; display: inline-block; cursor: pointer; }
+        .specialists-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-top: 40px; }
+        .expert-card { width: 100%; max-width: 350px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; display: flex; flex-direction: column; }
+        .expert-card:hover { transform: translateY(-5px); }
+        .card-header { height: 250px; position: relative; background: #eef2f5; }
         .card-header img { width: 100%; height: 100%; object-fit: cover; }
-
-        .no-photo {
-            width: 100%; height: 100%; display: flex;
-            align-items: center; justify-content: center;
-            color: #bdc3c7; font-size: 3rem;
-        }
-
-        .rating-badge {
-            position: absolute; bottom: 15px; right: 15px;
-            background: white; padding: 5px 12px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: bold; color: #333;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex; align-items: center; gap: 5px;
-        }
-        .rating-badge i { color: #f1c40f; }
-
-        .card-body {
-            padding: 25px; flex-grow: 1; display: flex; flex-direction: column;
-        }
-
-        .card-body h3 {
-            font-size: 1.25rem; color: #2c3e50; margin-bottom: 5px;
-        }
-
-        .spec-profession {
-            color: #0056b3; font-weight: 600; font-size: 0.9rem;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-
-        .spec-description {
-            color: #7f8c8d; font-size: 0.95rem; line-height: 1.6;
-            margin-top: 12px; flex-grow: 1; 
-        }
-
-        .card-footer {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
+        .no-photo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #bdc3c7; font-size: 3rem; }
+        .rating-badge { position: absolute; bottom: 15px; right: 15px; background: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .spec-profession { color: #0056b3; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+        .spec-description { color: #7f8c8d; font-size: 0.95rem; margin-top: 12px; flex-grow: 1; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
         .spec-price { display: flex; flex-direction: column; }
-        .spec-price small { font-size: 0.75rem; color: #95a5a6; text-transform: uppercase; }
         .spec-price strong { font-size: 1.2rem; color: #2c3e50; }
-
-        .btn-schedule {
-            background-color: #0056b3; color: white; padding: 10px 20px;
-            border-radius: 8px; text-decoration: none; font-weight: 500;
-            transition: 0.3s; border: none; cursor: pointer;
-        }
-        .btn-schedule:hover { background-color: #004494; transform: scale(1.05); }
-        .btn-schedule.disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
-
-        .empty-state {
-            width: 100%; text-align: center; padding: 50px; color: #95a5a6;
-        }
+        .btn-schedule { background-color: #0056b3; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-schedule:hover { transform: scale(1.05); opacity: 0.9; }
+        .empty-state { width: 100%; text-align: center; padding: 50px; color: #95a5a6; }
         .empty-state i { font-size: 3rem; color: #ddd; margin-bottom: 15px; }
     </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('q') || urlParams.has('category')) {
+                const section = document.getElementById('experts');
+                if (section) {
+                    setTimeout(() => { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+                }
+            }
+        });
+    </script>
+
 {% endblock %}
