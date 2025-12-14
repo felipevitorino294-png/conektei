@@ -1,91 +1,152 @@
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}{{ spec.user.first_name }} - Agendamento{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 120px; padding-bottom: 50px;">
+<div class="detail-container">
     
-    <div style="margin-bottom: 30px;">
-        <h1 style="color: #333;">Painel do Especialista</h1>
-        <p style="color: #666;">Bem-vindo, {{ user.first_name }}! Aqui está o resumo do seu dia.</p>
-    </div>
+    <div class="container">
+        <a href="{% url 'home' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Voltar para Lista
+        </a>
 
-    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
-
-        <div style="flex: 0 0 320px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;">
+        <div class="profile-layout">
             
-            <div style="width: 150px; height: 150px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 4px solid #f4f7f6;">
-                {% if user.profile.photo %}
-                    <img src="{{ user.profile.photo.url }}" alt="Foto de {{ user.first_name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                {% else %}
-                    <div style="width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3rem;">
-                        <i class="fas fa-user"></i>
+            <aside class="profile-sidebar">
+                <div class="profile-card-detail">
+                    <div class="profile-image-detail">
+                        {% if spec.photo %}
+                            <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
+                        {% else %}
+                            <div class="no-photo-detail"><i class="fas fa-user"></i></div>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
+                    
+                    <h1>{{ spec.user.first_name }}</h1>
+                    <span class="badge-profession">{{ spec.get_profession_display }}</span>
+                    
+                    <div class="rating-box">
+                        <i class="fas fa-star"></i> 5.0 <span>(Verificado)</span>
+                    </div>
 
-            <h2 style="margin-bottom: 5px; font-size: 1.5rem;">{{ user.first_name }}</h2>
-            <p style="color: #666; font-weight: 500; margin-bottom: 15px;">
-                {{ user.profile.profession|default:"Profissão não definida" }}
-            </p>
+                    <hr class="divider">
+                    
+                    <div class="price-box">
+                        <small>Valor da Consulta</small>
+                        <strong>R$ {{ spec.price|default:"--" }}</strong>
+                    </div>
+                </div>
+            </aside>
 
-            <div style="background: #eef6fc; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-                <span style="color: #0056b3; font-weight: bold;">
-                    {% if user.profile.price %}
-                        R$ {{ user.profile.price }} / consulta
+            <main class="profile-content">
+                
+                <div class="content-box">
+                    <div class="box-header">
+                        <h2><i class="far fa-calendar-check"></i> Agende sua Consulta</h2>
+                    </div>
+
+                    {% if not user.is_authenticated %}
+                        <div class="lock-screen">
+                            <i class="fas fa-sign-in-alt icon-lock"></i>
+                            <h3>Faça Login para Agendar</h3>
+                            <p>Entre na sua conta para visualizar os horários disponíveis.</p>
+                            <a href="{% url 'login' %}" class="btn-action">Entrar Agora</a>
+                        </div>
+
+                    {% elif not user.profile.has_active_plan %}
+                        <div class="lock-screen premium-lock">
+                            <i class="fas fa-crown icon-lock"></i>
+                            <h3>Agenda Exclusiva</h3>
+                            <p>Assine um plano para desbloquear a agenda deste especialista.</p>
+                            <a href="{% url 'plans_selection' %}" class="btn-action btn-premium">Ver Planos</a>
+                        </div>
+
                     {% else %}
-                        Preço não definido
+                        <p class="agenda-subtitle">Selecione um horário abaixo para confirmar imediatamente:</p>
+                        
+                        <div class="agenda-grid">
+                            {% for appt in appointments %}
+                                {% if appt.is_booked %}
+                                    <div class="time-slot booked" title="Indisponível">
+                                        <span class="slot-date">{{ appt.date|date:"d/m" }}</span>
+                                        <span class="slot-time">{{ appt.time|time:"H:i" }}</span>
+                                        <span class="slot-status">Ocupado</span>
+                                    </div>
+                                {% else %}
+                                    <a href="{% url 'book_appointment' appt.id %}" class="time-slot available" onclick="return confirm('Confirmar agendamento para {{ appt.time }}?');">
+                                        <span class="slot-date">{{ appt.date|date:"d/m" }}</span>
+                                        <span class="slot-time">{{ appt.time|time:"H:i" }}</span>
+                                        <span class="slot-status">Livre</span>
+                                    </a>
+                                {% endif %}
+                            {% empty %}
+                                <div class="empty-agenda">
+                                    <i class="far fa-calendar-times"></i>
+                                    <p>Nenhum horário disponível no momento.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% endif %}
-                </span>
-            </div>
+                </div>
 
-            <a href="{% url 'edit_profile' %}" class="btn" style="width: 100%; display: inline-block; background-color: #0d6efd; color: white; padding: 10px; border-radius: 5px; text-decoration: none;">
-                <i class="fas fa-pen"></i> Editar Perfil
-            </a>
+                <div class="content-box" style="margin-top: 30px;">
+                    <h3>Sobre o Especialista</h3>
+                    <div class="bio-text">
+                        {{ spec.description|default:"Este profissional ainda não adicionou uma descrição."|linebreaks }}
+                    </div>
+                </div>
 
+            </main>
         </div>
-        <div style="flex: 1; min-width: 300px;">
-            
-            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div>
-                    <h3 style="margin: 0; font-size: 1.2rem;">Disponibilidade</h3>
-                    <span style="font-size: 0.9rem; color: #666;">Ficar online para receber chamadas agora?</span>
-                </div>
-                
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-weight: bold; color: #198754;">ONLINE</span>
-                    <label style="position: relative; display: inline-block; width: 50px; height: 28px;">
-                        <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
-                        <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #198754; transition: .4s; border-radius: 34px;"></span>
-                        <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; transform: translateX(22px);"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                
-                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #0d6efd;">
-                    <span style="color: #666; font-size: 0.9rem;">Ganhos (Mês)</span>
-                    <h3 style="margin: 5px 0 0; color: #333;">R$ 0,00</h3>
-                </div>
-
-                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #198754;">
-                    <span style="color: #666; font-size: 0.9rem;">Consultas Hoje</span>
-                    <h3 style="margin: 5px 0 0; color: #333;">0</h3>
-                </div>
-
-                <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ffc107;">
-                    <span style="color: #666; font-size: 0.9rem;">Sua Nota</span>
-                    <h3 style="margin: 5px 0 0; color: #333;">5.0 ★</h3>
-                </div>
-
-            </div>
-
-            <div style="background: white; border: 1px dashed #ccc; border-radius: 12px; padding: 40px; text-align: center; color: #999;">
-                <p>📅 Nenhuma consulta agendada para hoje.</p>
-                <button class="btn" style="border: 1px solid #ddd; padding: 5px 15px; margin-top: 10px; border-radius: 5px;">Ver agenda completa</button>
-            </div>
-
-        </div>
-        </div>
+    </div>
 </div>
+
+<style>
+    /* Layout Base */
+    .detail-container { padding-top: 110px; padding-bottom: 80px; background-color: #f8f9fa; min-height: 100vh; }
+    .btn-back { display: inline-block; color: #666; text-decoration: none; margin-bottom: 20px; font-weight: 500; transition: 0.2s; }
+    .btn-back:hover { color: #0056b3; transform: translateX(-5px); }
+
+    .profile-layout { display: grid; grid-template-columns: 320px 1fr; gap: 40px; }
+    
+    /* Card Esquerda */
+    .profile-card-detail { background: white; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; position: sticky; top: 100px; }
+    .profile-image-detail { width: 140px; height: 140px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 5px solid #eef2f5; }
+    .profile-image-detail img { width: 100%; height: 100%; object-fit: cover; }
+    .no-photo-detail { width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #aaa; }
+    
+    .profile-card-detail h1 { font-size: 1.6rem; color: #333; margin-bottom: 5px; }
+    .badge-profession { background: #eef6fc; color: #0056b3; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+    .rating-box { color: #ffc107; font-weight: bold; font-size: 1.1rem; }
+    .rating-box span { color: #ccc; font-weight: normal; font-size: 0.8rem; margin-left: 5px; }
+    .divider { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+    .price-box strong { font-size: 2rem; color: #2c3e50; display: block; }
+
+    /* Conteúdo Direita */
+    .content-box { background: white; padding: 35px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid #eee; }
+    .box-header h2 { font-size: 1.4rem; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px; }
+    .agenda-subtitle { color: #666; margin-bottom: 25px; }
+
+    /* Grid Agenda */
+    .agenda-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
+    .time-slot { display: flex; flex-direction: column; align-items: center; padding: 15px 5px; border-radius: 10px; text-decoration: none; border: 1px solid #eee; transition: 0.2s; background: #fff; }
+    .time-slot.available { border-color: #27ae60; color: #27ae60; background: #f0fdf4; cursor: pointer; }
+    .time-slot.available:hover { background: #27ae60; color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.2); }
+    .time-slot.booked { background: #f8f9fa; border-color: #ddd; color: #ccc; cursor: not-allowed; opacity: 0.7; }
+    .slot-time { font-size: 1.3rem; font-weight: 800; margin: 5px 0; }
+    .slot-status { font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+
+    /* Lock Screen (Bloqueios) */
+    .lock-screen { text-align: center; padding: 40px; background: #f8f9fa; border-radius: 12px; border: 1px dashed #ccc; }
+    .icon-lock { font-size: 3rem; color: #6c757d; margin-bottom: 15px; display: block; }
+    .premium-lock .icon-lock { color: #e67e22; }
+    .btn-action { background: #0056b3; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 15px; transition: 0.3s; }
+    .btn-action:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-premium { background: #e67e22; }
+
+    .bio-text { color: #555; line-height: 1.6; }
+    .empty-agenda { text-align: center; color: #999; padding: 30px; font-style: italic; width: 100%; grid-column: 1 / -1; }
+
+    @media (max-width: 850px) { .profile-layout { grid-template-columns: 1fr; } .profile-card-detail { position: static; } }
+</style>
 {% endblock %}

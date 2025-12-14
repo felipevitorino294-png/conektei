@@ -2,44 +2,147 @@
 {% load static %}
 
 {% block content %}
-<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+<div class="container" style="padding-top: 120px; padding-bottom: 50px;">
     
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="color: #0056b3;">Painel do Especialista</h1>
-        <p>Gerencie seu perfil e veja como os clientes te veem.</p>
+    <div style="margin-bottom: 30px;">
+        <h1 style="color: #333;">Painel do Especialista</h1>
+        <p style="color: #666;">Gerencie sua disponibilidade e veja seus agendamentos.</p>
     </div>
 
-    <div style="max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;">
-        
-        <div style="width: 150px; height: 150px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; border: 4px solid #f4f7f6;">
-            {% if user.profile.photo %}
-                <img src="{{ user.profile.photo.url }}" alt="Foto de {{ user.first_name }}" style="width: 100%; height: 100%; object-fit: cover;">
-            {% else %}
-                <div style="width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3rem;">
-                    <i class="fas fa-user"></i>
-                </div>
-            {% endif %}
-        </div>
+    <div class="dashboard-grid">
 
-        <h2 style="margin-bottom: 5px;">{{ user.first_name }}</h2>
-        <p style="color: #666; font-weight: 500; margin-bottom: 15px;">
-            {{ user.profile.profession|default:"Defina sua profissão" }}
-        </p>
+        <div class="sidebar-card">
+            <div class="profile-img-container">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="Foto">
+                {% else %}
+                    <div class="no-photo"><i class="fas fa-user"></i></div>
+                {% endif %}
+            </div>
 
-        <div style="background: #eef6fc; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-            <span style="color: #0056b3; font-weight: bold;">
+            <h2>{{ user.first_name }}</h2>
+            <p class="prof-label">{{ user.profile.profession|default:"Profissão não definida" }}</p>
+
+            <div class="price-badge">
                 {% if user.profile.price %}
                     R$ {{ user.profile.price }} / consulta
                 {% else %}
                     Preço não definido
                 {% endif %}
-            </span>
+            </div>
+
+            <a href="{% url 'edit_profile' %}" class="btn-edit">
+                <i class="fas fa-pen"></i> Editar Perfil
+            </a>
         </div>
 
-        <a href="{% url 'edit_profile' %}" class="btn" style="width: 100%; display: inline-block;">
-            <i class="fas fa-pen"></i> Editar Perfil
-        </a>
+        <div class="main-content">
+            
+            <div class="card-box">
+                <h3><i class="fas fa-plus-circle"></i> Adicionar Horário</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Defina quando você está livre para atender.</p>
+                
+                <form action="{% url 'create_appointment' %}" method="POST" class="add-time-form">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <label>Data</label>
+                        <input type="date" name="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Hora</label>
+                        <input type="time" name="time" required>
+                    </div>
+                    <button type="submit" class="btn-add">Liberar Horário</button>
+                </form>
+            </div>
 
+            <div class="card-box" style="margin-top: 20px;">
+                <h3><i class="far fa-calendar-alt"></i> Minha Agenda</h3>
+                
+                <div class="agenda-list">
+                    {% for appt in appointments %}
+                        <div class="appt-item {% if appt.is_booked %}booked{% else %}free{% endif %}">
+                            
+                            <div class="appt-info">
+                                <span class="appt-date">{{ appt.date|date:"d/m/Y" }}</span>
+                                <span class="appt-time">{{ appt.time|time:"H:i" }}</span>
+                                
+                                {% if appt.is_booked %}
+                                    <span class="status-badge occupied">
+                                        <i class="fas fa-user-check"></i> Agendado com <strong>{{ appt.client.first_name }}</strong>
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge free">
+                                        <i class="fas fa-check"></i> Livre
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'delete_appointment' appt.id %}" class="btn-delete" onclick="return confirm('Tem certeza que deseja excluir este horário?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">
+                            <p>Você não tem horários cadastrados.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
+
+<style>
+    /* Layout */
+    .dashboard-grid { display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
+    .sidebar-card { flex: 0 0 320px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+    .main-content { flex: 1; min-width: 300px; }
+    .card-box { background: white; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+
+    /* Perfil Sidebar */
+    .profile-img-container { width: 120px; height: 120px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 4px solid #f4f7f6; }
+    .profile-img-container img { width: 100%; height: 100%; object-fit: cover; }
+    .no-photo { width: 100%; height: 100%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #999; font-size: 3rem; }
+    .prof-label { color: #666; font-weight: 500; margin-bottom: 15px; }
+    .price-badge { background: #eef6fc; padding: 10px; border-radius: 8px; margin-bottom: 20px; color: #0056b3; font-weight: bold; }
+    .btn-edit { display: block; background-color: #0d6efd; color: white; padding: 10px; border-radius: 5px; text-decoration: none; transition: 0.3s; }
+    .btn-edit:hover { background-color: #0b5ed7; }
+
+    /* Formulário de Adicionar */
+    .add-time-form { display: flex; gap: 15px; align-items: flex-end; }
+    .input-group { flex: 1; text-align: left; }
+    .input-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; font-weight: bold; }
+    .input-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+    .btn-add { background: #198754; color: white; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .btn-add:hover { background: #157347; }
+
+    /* Lista de Agenda */
+    .agenda-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .appt-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-radius: 8px; border-left: 5px solid #ccc; background: #f9f9f9; }
+    
+    .appt-item.free { border-left-color: #198754; background: #f0fdf4; }
+    .appt-item.booked { border-left-color: #0d6efd; background: #f0f7ff; }
+
+    .appt-info { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .appt-date { font-weight: bold; color: #333; }
+    .appt-time { font-size: 1.1rem; font-weight: 800; color: #333; background: white; padding: 2px 8px; border-radius: 4px; border: 1px solid #eee; }
+    
+    .status-badge { font-size: 0.85rem; padding: 4px 10px; border-radius: 20px; }
+    .status-badge.free { color: #198754; background: rgba(25, 135, 84, 0.1); }
+    .status-badge.occupied { color: #0d6efd; background: rgba(13, 110, 253, 0.1); }
+
+    .btn-delete { color: #dc3545; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+    .btn-delete:hover { background: #fceded; }
+    
+    .empty-state { text-align: center; color: #999; padding: 20px; font-style: italic; }
+
+    @media (max-width: 600px) {
+        .add-time-form { flex-direction: column; }
+        .btn-add { width: 100%; }
+        .dashboard-grid { flex-direction: column; }
+        .sidebar-card { width: 100%; flex: auto; }
+    }
+</style>
 {% endblock %}

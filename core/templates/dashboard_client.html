@@ -3,43 +3,50 @@
 {% block title %}Painel do Cliente{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 140px; padding-bottom: 100px;">
+<div class="container" style="padding-top: 120px; padding-bottom: 80px;">
 
-    {% if user.profile.access_type == 'nenhum' %}
+    {% if not user.profile.has_active_plan %}
         
         <div class="welcome-container">
             <h2 class="welcome-title">Bem-vindo, {{ user.first_name }}!</h2>
-            <p class="welcome-subtitle">Para começar, como você prefere utilizar a plataforma?</p>
+            <p class="welcome-subtitle">Para acessar a agenda dos especialistas, escolha seu plano:</p>
 
-            <div class="choice-grid">
-                <div class="choice-card recommended">
-                    <div class="badge">Mais Econômico</div>
-                    <div class="icon-box">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <h3>Quero ser Assinante</h3>
-                    <p>Tenha acesso ilimitado para contatar especialistas com uma mensalidade fixa.</p>
-                    <ul class="features">
-                        <li><i class="fas fa-check"></i> Agendamentos ilimitados</li>
-                        <li><i class="fas fa-check"></i> Acesso direto ao WhatsApp</li>
-                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+            <div class="pricing-plans">
+                
+                <div class="pricing-card">
+                    <h3>Básico</h3>
+                    <div class="price">R$ 29<span>,90</span></div>
+                    <p class="pricing-period">mensal</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Ver agenda completa</li>
+                        <li><i class="fas fa-check"></i> Agendamento liberado</li>
                     </ul>
-                    <a href="{% url 'choose_access' 'assinatura' %}" class="btn-choice primary">Escolher Assinatura</a>
+                    <a href="{% url 'checkout' 'Basico' '29.90' %}" class="btn btn-outline">Assinar Agora</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Recomendado</div>
+                    <h3>Premium</h3>
+                    <div class="price">R$ 59<span>,90</span></div>
+                    <p class="pricing-period">trimestral</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Tudo do Básico</li>
+                        <li><i class="fas fa-check"></i> Suporte Prioritário</li>
+                    </ul>
+                    <a href="{% url 'checkout' 'Premium' '59.90' %}" class="btn">Assinar Agora</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Empresarial</h3>
+                    <div class="price">R$ 149<span>,90</span></div>
+                    <p class="pricing-period">anual</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Múltiplos usuários</li>
+                        <li><i class="fas fa-check"></i> Gerente de conta</li>
+                    </ul>
+                    <a href="{% url 'checkout' 'Empresarial' '149.90' %}" class="btn btn-outline">Assinar Agora</a>
                 </div>
 
-                <div class="choice-card">
-                    <div class="icon-box simple">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <h3>Pagamento Avulso</h3>
-                    <p>Pague apenas quando precisar de uma consulta. Sem custos fixos mensais.</p>
-                    <ul class="features">
-                        <li><i class="fas fa-check"></i> Sem mensalidade</li>
-                        <li><i class="fas fa-check"></i> Pague o valor da consulta</li>
-                        <li><i class="fas fa-check"></i> Acesso sob demanda</li>
-                    </ul>
-                    <a href="{% url 'choose_access' 'avulso' %}" class="btn-choice outline">Escolher Avulso</a>
-                </div>
             </div>
         </div>
 
@@ -47,25 +54,47 @@
         
         <div class="dashboard-header">
             <div>
-                <h2 style="color: #0056b3;">Painel do Cliente</h2>
-                <p>Status da conta: <strong style="color: #27ae60;">{{ user.profile.get_access_type_display }}</strong></p>
+                <h2 style="color: #0056b3;">Profissionais Disponíveis</h2>
+                <p>Status: <strong style="color: #27ae60;">Acesso Liberado</strong>. Escolha um especialista abaixo.</p>
             </div>
-            
-            <a href="{% url 'choose_access' 'nenhum' %}" style="font-size: 0.9rem; color: #7f8c8d; text-decoration: underline;">Alterar meu plano</a>
+            <a href="{% url 'home' %}" class="btn btn-outline" style="font-size: 0.9rem;">Ver Lista Completa</a>
         </div>
 
-        <div class="dashboard-actions">
-            <a href="{% url 'home' %}" class="action-card">
-                <div class="action-icon"><i class="fas fa-search"></i></div>
-                <h3>Buscar Especialistas</h3>
-                <p>Encontre profissionais agora.</p>
-            </a>
-            
-            <a href="{% url 'edit_profile' %}" class="action-card">
-                <div class="action-icon"><i class="fas fa-user-edit"></i></div>
-                <h3>Editar Perfil</h3>
-                <p>Atualize seus dados.</p>
-            </a>
+        <div class="specialists-grid">
+            {% for spec in specialists %}
+            <div class="expert-card">
+                <a href="{% url 'specialist_detail' spec.id %}" style="text-decoration: none; color: inherit;">
+                    <div class="card-header">
+                        {% if spec.photo %}
+                            <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
+                        {% else %}
+                            <div class="no-photo"><i class="fas fa-user"></i></div>
+                        {% endif %}
+                        <div class="online-badge">
+                            <i class="fas fa-circle"></i> Disponível
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h3>{{ spec.user.first_name }}</h3>
+                        <span class="spec-profession">{{ spec.get_profession_display }}</span>
+                        <p class="spec-description">
+                            {{ spec.description|default:"Profissional disponível."|truncatechars:70 }}
+                        </p>
+                    </div>
+                </a>
+                
+                <div class="card-footer" style="padding: 15px; border-top: 1px solid #eee;">
+                    <a href="{% url 'specialist_detail' spec.id %}" class="btn-schedule" style="display: block; text-align: center; width: 100%;">
+                        Ver Agenda
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+                <div class="empty-state">
+                    <p>Nenhum especialista disponível.</p>
+                </div>
+            {% endfor %}
         </div>
 
     {% endif %}
@@ -73,166 +102,33 @@
 </div>
 
 <style>
-    /* --- Estilos da Tela de Boas-vindas --- */
-    .welcome-container {
-        text-align: center;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    .welcome-title {
-        color: #2c3e50;
-        margin-bottom: 15px;
-        font-size: 2.5rem;
-    }
-    .welcome-subtitle {
-        color: #7f8c8d;
-        font-size: 1.2rem;
-        margin-bottom: 60px;
-    }
-
-    .choice-grid {
-        display: flex;
-        gap: 50px; /* Aumentei o espaço entre os cards */
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .choice-card {
-        background: white;
-        padding: 40px 30px;
-        border-radius: 20px;
-        width: 100%;
-        max-width: 380px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.08); /* Sombra mais suave */
-        position: relative;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .choice-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-    }
-
-    .choice-card.recommended {
-        border-color: #0056b3;
-        background: #f8fbff;
-    }
+    /* CSS Simplificado e Seguro */
+    .welcome-container { text-align: center; max-width: 1000px; margin: 0 auto; }
+    .welcome-title { color: #2c3e50; font-size: 2.5rem; margin-bottom: 10px; }
+    .welcome-subtitle { color: #7f8c8d; font-size: 1.2rem; margin-bottom: 40px; }
     
-    .badge {
-        position: absolute;
-        top: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #0056b3;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        box-shadow: 0 5px 15px rgba(0,86,179,0.3);
-    }
-
-    .icon-box {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 20px;
-        background: #e3f2fd;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        color: #0056b3;
-    }
-    .icon-box.simple {
-        background: #f0f2f5;
-        color: #2c3e50;
-    }
-
-    .choice-card h3 { margin-bottom: 15px; color: #333; }
-    .choice-card p { color: #666; margin-bottom: 25px; line-height: 1.5; flex-grow: 1; }
+    .pricing-plans { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+    .pricing-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 300px; border: 1px solid #eee; position: relative; transition: 0.3s; }
+    .pricing-card:hover { transform: translateY(-10px); }
+    .pricing-card.popular { border: 2px solid #0056b3; transform: scale(1.05); }
     
-    .features {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 30px 0;
-        text-align: left;
-        border-top: 1px solid #eee;
-        padding-top: 20px;
-    }
-    .features li { margin-bottom: 12px; color: #555; display: flex; align-items: center; }
-    .features i { color: #27ae60; margin-right: 12px; font-size: 0.9rem; }
+    .popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #0056b3; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+    .price { font-size: 2.5rem; color: #2c3e50; font-weight: bold; margin: 20px 0; }
+    .btn { background: #0056b3; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
+    .btn-outline { background: transparent; border: 2px solid #0056b3; color: #0056b3; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
+    .btn-outline:hover { background: #0056b3; color: white; }
 
-    .btn-choice {
-        display: block;
-        padding: 15px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        letter-spacing: 0.5px;
-    }
-    .btn-choice.primary {
-        background: #0056b3;
-        color: white;
-        box-shadow: 0 5px 15px rgba(0,86,179,0.2);
-    }
-    .btn-choice.primary:hover {
-        background: #004494;
-        transform: translateY(-2px);
-    }
-    .btn-choice.outline {
-        border: 2px solid #ddd;
-        color: #555;
-        background: white;
-    }
-    .btn-choice.outline:hover {
-        border-color: #333;
-        color: #333;
-    }
-
-    /* --- Estilos do Painel Normal --- */
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 30px;
-        margin-bottom: 40px;
-    }
-    .dashboard-actions {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-    .action-card {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        text-decoration: none;
-        color: inherit;
-        width: 250px;
-        text-align: center;
-        transition: 0.3s;
-        border: 1px solid #f0f0f0;
-    }
-    .action-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-color: #0056b3;
-    }
-    .action-icon {
-        font-size: 2.5rem;
-        color: #0056b3;
-        margin-bottom: 15px;
-    }
-    .action-card h3 { font-size: 1.2rem; margin-bottom: 5px; }
-    .action-card p { color: #7f8c8d; font-size: 0.9rem; }
+    /* Estilos do Painel Logado */
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 30px; margin-bottom: 40px; }
+    .specialists-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+    .expert-card { width: 100%; max-width: 300px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+    .expert-card:hover { transform: translateY(-5px); }
+    .card-header { height: 200px; position: relative; }
+    .card-header img { width: 100%; height: 100%; object-fit: cover; }
+    .no-photo { width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #ccc; }
+    .online-badge { position: absolute; top: 10px; right: 10px; background: #27ae60; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+    .card-body { padding: 20px; }
+    .btn-schedule { background: #0056b3; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+    .btn-schedule:hover { background: #004494; }
 </style>
 {% endblock %}

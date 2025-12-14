@@ -1,145 +1,139 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Perfil{% endblock %}
+{% block title %}Editar Perfil Profissional{% endblock %}
 
 {% block content %}
-<div class="edit-profile-container" style="padding: 120px 20px;">
-    <div class="form-box" style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-        <h2 style="color: #0056b3; margin-bottom: 30px; text-align: center;">Editar Meu Perfil</h2>
+<div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+    
+    <div class="edit-header">
+        <h1>Complete seu Perfil</h1>
+        <p>Mantenha seus dados atualizados para atrair mais clientes.</p>
+    </div>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+    <form method="POST" enctype="multipart/form-data" class="edit-grid">
+        {% csrf_token %}
 
-            <div class="form-group-custom">
-                <label for="{{ form.profession.id_for_label }}">{{ form.profession.label }}</label>
-                {{ form.profession }}
-            </div>
-
-            <div class="form-group-custom">
-                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-                {{ form.description }}
-            </div>
-
-             <div class="form-group-custom">
-                <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
-                {{ form.price }}
-            </div>
-
-             <div class="form-group-custom">
-                <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
-                {{ form.phone }}
-            </div>
-
-            <div class="form-group-custom photo-upload-group">
+        <div class="form-section">
+            
+            <div class="form-group">
                 <label>Foto de Perfil</label>
-                
-                {% if user.profile.photo %}
-                    <div class="current-photo-preview">
-                        <img src="{{ user.profile.photo.url }}" alt="Foto atual">
-                        <span>Foto atual</span>
-                    </div>
-                {% endif %}
+                <div class="photo-input-container">
+                    {{ form.photo }}
+                </div>
+                <small style="color: #666; font-size: 0.8rem;">Recomendado: Foto quadrada e profissional.</small>
+            </div>
 
-                <div class="file-upload-wrapper">
-                     {{ form.photo }} 
-                    
-                    <label for="id_photo" class="btn-upload-custom">
-                        <i class="fas fa-camera"></i> Escolher Nova Foto
-                    </label>
-                    <span id="file-chosen">Nenhum arquivo selecionado</span>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Área de Atuação</label>
+                    {{ form.profession }}
+                </div>
+                <div class="form-group">
+                    <label>Valor da Consulta (R$)</label>
+                    {{ form.price }}
                 </div>
             </div>
-            <div class="form-actions" style="margin-top: 30px; display: flex; gap: 15px;">
-                 <button type="submit" class="btn-save" style="flex: 1; background: #0056b3; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;">Salvar Alterações</button>
-                 <a href="{% url 'dashboard' %}" class="btn-cancel" style="flex: 1; text-align: center; background: #eee; color: #333; text-decoration: none; padding: 15px; border-radius: 10px; font-weight: bold;">Cancelar</a>
+
+            <div class="form-group">
+                <label>WhatsApp (Somente números)</label>
+                {{ form.phone }}
+                <small style="color: #666; font-size: 0.8rem;">Ex: 11999998888 (Apenas números)</small>
             </div>
-        </form>
-    </div>
+
+            <div class="form-group">
+                <label>Sobre Você</label>
+                {{ form.description }}
+                <small>Descreva sua experiência e especialidades.</small>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn-save">Salvar Alterações</button>
+                <a href="{% url 'dashboard' %}" class="btn-cancel">Cancelar</a>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <h3>Como você aparece na busca:</h3>
+            
+            <div class="expert-card preview-card">
+                <div class="card-header">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Foto">
+                    {% else %}
+                        <div class="no-photo"><i class="fas fa-user"></i></div>
+                    {% endif %}
+                    <div class="rating-badge"><i class="fas fa-star"></i> 5.0</div>
+                </div>
+
+                <div class="card-body">
+                    <h3>{{ user.first_name }}</h3>
+                    <span class="spec-profession">{{ user.profile.get_profession_display|default:"Profissão não definida" }}</span>
+                    <p class="spec-description">
+                        {{ user.profile.description|default:"Sua descrição aparecerá aqui..."|truncatechars:80 }}
+                    </p>
+                </div>
+
+                <div class="card-footer">
+                    <div class="spec-price">
+                        <small>Consulta</small>
+                        <strong>R$ {{ user.profile.price|default:"0,00" }}</strong>
+                    </div>
+                    <button class="btn-schedule" disabled>Ver Perfil</button>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; color: #999; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> O card será atualizado após salvar.
+            </p>
+        </div>
+
+    </form>
 </div>
 
 <style>
-    .form-group-custom {
-        margin-bottom: 20px;
-    }
-    .form-group-custom label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-    }
-    .form-group-custom input[type="text"],
-    .form-group-custom input[type="number"],
-    .form-group-custom select,
-    .form-group-custom textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-family: inherit;
-    }
-    .form-group-custom textarea {
-        resize: vertical;
-        height: 100px;
-    }
+    /* Layout */
+    .edit-header { text-align: center; margin-bottom: 40px; }
+    .edit-header h1 { color: #0056b3; font-size: 2rem; }
 
-    /* --- CSS DO UPLOAD DE FOTO --- */
-    /* Esconde o input feio original do Django/Navegador */
-    input[type="file"]#id_photo {
-        display: none;
+    .edit-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start; }
+    
+    /* Formulário */
+    .form-section { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
+    
+    /* Estilizando os inputs do Django */
+    .form-group input[type="text"], 
+    .form-group input[type="number"], 
+    .form-group select, 
+    .form-group textarea { 
+        width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: 0.3s; 
     }
-    /* Esconde os textos extras que o Django coloca (Currently, Clear) */
-    .photo-upload-group a, .photo-upload-group label[for*="clear"] {
-        display: none;
-    }
+    .form-group textarea { height: 120px; resize: vertical; }
+    
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    /* Estilo do nosso botão personalizado */
-    .btn-upload-custom {
-        display: inline-block;
-        background-color: #eef2f5;
-        color: #0056b3;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.3s;
-        border: 2px dashed #cbd5e0;
-        text-align: center;
-    }
-    .btn-upload-custom:hover {
-        background-color: #e0e6ed;
-        border-color: #0056b3;
-    }
-    .btn-upload-custom i { margin-right: 8px; }
+    /* Botões */
+    .action-buttons { display: flex; gap: 15px; margin-top: 30px; }
+    .btn-save { flex: 1; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-save:hover { background: #219150; }
+    .btn-cancel { background: #f8f9fa; color: #666; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; border: 1px solid #ddd; }
+    .btn-cancel:hover { background: #e2e6ea; }
 
-    #file-chosen {
-        margin-left: 15px;
-        font-size: 0.9rem;
-        color: #7f8c8d;
-    }
-    .current-photo-preview {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 10px;
-    }
-    .current-photo-preview img {
-        width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+    /* Preview */
+    .preview-section { background: #f8f9fa; padding: 30px; border-radius: 15px; border: 1px dashed #ccc; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    
+    /* Estilos do Card (Cópia da Home) */
+    .expert-card { width: 100%; max-width: 300px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; }
+    .card-header { height: 200px; position: relative; background: #eef2f5; }
+    .card-header img { width: 100%; height: 100%; object-fit: cover; }
+    .no-photo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #bdc3c7; font-size: 3rem; }
+    .card-body { padding: 20px; }
+    .spec-profession { color: #0056b3; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 20px; }
+    .spec-price strong { font-size: 1.2rem; color: #2c3e50; }
+    .btn-schedule { background-color: #0056b3; color: white; padding: 8px 20px; border-radius: 6px; border: none; opacity: 0.7; }
+
+    @media (max-width: 900px) { .edit-grid { grid-template-columns: 1fr; } }
 </style>
-
-<script>
-    const actualBtn = document.getElementById('id_photo');
-    const fileChosen = document.getElementById('file-chosen');
-
-    actualBtn.addEventListener('change', function(){
-      if(this.files.length > 0) {
-          fileChosen.textContent = this.files[0].name;
-      } else {
-          fileChosen.textContent = "Nenhum arquivo selecionado";
-      }
-    })
-</script>
 {% endblock %}

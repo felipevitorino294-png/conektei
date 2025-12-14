@@ -15,7 +15,7 @@ class Profile(models.Model):
         ('Outros', 'Outros'),
     ]
 
-    # --- NOVO: Opções de Tipo de Acesso ---
+    # Opções de Tipo de Acesso
     ACCESS_CHOICES = [
         ('nenhum', 'Não definido'),
         ('assinatura', 'Assinante (Plano Mensal)'),
@@ -38,8 +38,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="WhatsApp")
     photo = models.ImageField(upload_to='profiles/', blank=True, null=True, verbose_name="Foto de Perfil")
 
-    # --- Controle de Pagamento / Acesso ---
-    # Mantivemos o has_active_plan para compatibilidade, mas o access_type é o principal agora
+    # Controle de Pagamento / Acesso
     has_active_plan = models.BooleanField(default=False, verbose_name="Tem Plano Ativo?")
     
     access_type = models.CharField(
@@ -49,7 +48,6 @@ class Profile(models.Model):
         verbose_name="Tipo de Acesso"
     )
 
-    # --- Limpeza do Telefone para o WhatsApp ---
     def clean_phone(self):
         """Retorna o telefone apenas com números para o link do WhatsApp"""
         if self.phone:
@@ -58,3 +56,20 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
+
+
+# --- NOVA CLASSE: AGENDA / HORÁRIOS ---
+class Appointment(models.Model):
+    specialist = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='appointments')
+    client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
+    
+    date = models.DateField(verbose_name="Data")
+    time = models.TimeField(verbose_name="Horário")
+    is_booked = models.BooleanField(default=False, verbose_name="Reservado?")
+
+    class Meta:
+        ordering = ['date', 'time']
+
+    def __str__(self):
+        status = "OCUPADO" if self.is_booked else "LIVRE"
+        return f"{self.date} às {self.time} - {self.specialist.user.first_name} ({status})"
