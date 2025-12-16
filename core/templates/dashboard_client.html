@@ -12,7 +12,6 @@
             <p class="welcome-subtitle">Para acessar a agenda dos especialistas, escolha seu plano:</p>
 
             <div class="pricing-plans">
-                
                 <div class="pricing-card">
                     <h3>Básico</h3>
                     <div class="price">R$ 29<span>,90</span></div>
@@ -46,12 +45,48 @@
                     </ul>
                     <a href="{% url 'checkout' 'Empresarial' '149.90' %}" class="btn btn-outline">Assinar Agora</a>
                 </div>
-
             </div>
         </div>
 
     {% else %}
         
+        <div class="my-appointments-section" style="margin-bottom: 60px;">
+            <div class="dashboard-header">
+                <h2 style="color: #2c3e50;">Meus Agendamentos</h2>
+            </div>
+
+            <div class="appointments-list">
+                {% for appt in appointments %}
+                <div class="appointment-card-row">
+                    <div class="appt-info">
+                        <h3>{{ appt.specialist.user.first_name }}</h3>
+                        <span class="badge-prof">{{ appt.specialist.get_profession_display }}</span>
+                        <p class="appt-time">
+                            <i class="far fa-calendar-alt"></i> <strong>{{ appt.date|date:"d/m/Y" }}</strong> às <strong>{{ appt.time }}</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="appt-actions">
+                        <span class="cancel-text">Precisa alterar o horário?</span>
+                        <a href="{% url 'home' %}#contact" class="btn-reschedule-action">
+                            <i class="fas fa-sync-alt"></i> Solicitar Remarcação
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                    <div class="empty-appt">
+                        <p style="margin-bottom: 15px; color: #7f8c8d;">Você não tem consultas agendadas no momento.</p>
+                        
+                        <a href="{% url 'home' %}#contact" class="btn btn-outline" style="font-size: 0.9rem; border-width: 1px;">
+                            <i class="fas fa-envelope"></i> Falar com Suporte / Dúvidas
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;">
+
         <div class="dashboard-header">
             <div>
                 <h2 style="color: #0056b3;">Profissionais Disponíveis</h2>
@@ -82,7 +117,7 @@
                             {{ spec.description|default:"Profissional disponível."|truncatechars:70 }}
                         </p>
                     </div>
-                </a>
+                </a> 
                 
                 <div class="card-footer" style="padding: 15px; border-top: 1px solid #eee;">
                     <a href="{% url 'specialist_detail' spec.id %}" class="btn-schedule" style="display: block; text-align: center; width: 100%;">
@@ -102,23 +137,88 @@
 </div>
 
 <style>
-    /* CSS Simplificado e Seguro */
+    /* --- ESTILOS GERAIS --- */
     .welcome-container { text-align: center; max-width: 1000px; margin: 0 auto; }
     .welcome-title { color: #2c3e50; font-size: 2.5rem; margin-bottom: 10px; }
     .welcome-subtitle { color: #7f8c8d; font-size: 1.2rem; margin-bottom: 40px; }
     
+    /* Planos */
     .pricing-plans { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
     .pricing-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 300px; border: 1px solid #eee; position: relative; transition: 0.3s; }
     .pricing-card:hover { transform: translateY(-10px); }
     .pricing-card.popular { border: 2px solid #0056b3; transform: scale(1.05); }
-    
     .popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #0056b3; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
     .price { font-size: 2.5rem; color: #2c3e50; font-weight: bold; margin: 20px 0; }
+    
+    /* Botões Padrão */
     .btn { background: #0056b3; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
     .btn-outline { background: transparent; border: 2px solid #0056b3; color: #0056b3; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
     .btn-outline:hover { background: #0056b3; color: white; }
 
-    /* Estilos do Painel Logado */
+    /* --- ESTILOS DO AGENDAMENTO --- */
+    .appointment-card-row {
+        background: white;
+        border: 1px solid #eee;
+        border-left: 5px solid #0056b3; /* Destaque Azul */
+        border-radius: 10px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .appt-info h3 { margin: 0 0 5px 0; color: #2c3e50; font-size: 1.2rem; }
+    .badge-prof { background: #eef2f5; color: #666; padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; }
+    .appt-time { margin-top: 10px; color: #555; }
+    
+    /* Área da Ação */
+    .appt-actions {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 5px;
+    }
+    
+    .cancel-text {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    
+    /* Botão de Remarcar (Laranja) */
+    .btn-reschedule-action {
+        background-color: #f39c12; 
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: 0.3s;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-reschedule-action:hover { 
+        background-color: #e67e22; 
+        transform: translateY(-2px); 
+        color: white;
+    }
+
+    .empty-appt { 
+        background: #fcfcfc; 
+        padding: 30px; 
+        border-radius: 10px; 
+        text-align: center; 
+        border: 1px dashed #ddd;
+    }
+
+    /* --- ESTILOS DOS ESPECIALISTAS --- */
     .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 30px; margin-bottom: 40px; }
     .specialists-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
     .expert-card { width: 100%; max-width: 300px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
@@ -130,5 +230,13 @@
     .card-body { padding: 20px; }
     .btn-schedule { background: #0056b3; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; }
     .btn-schedule:hover { background: #004494; }
+
+    /* Mobile Responsividade */
+    @media (max-width: 768px) {
+        .appointment-card-row { flex-direction: column; align-items: flex-start; text-align: left; }
+        .appt-actions { align-items: flex-start; text-align: left; margin-top: 10px; width: 100%; }
+        .btn-reschedule-action { width: 100%; justify-content: center; }
+        .dashboard-header { flex-direction: column; gap: 15px; text-align: center; }
+    }
 </style>
 {% endblock %}

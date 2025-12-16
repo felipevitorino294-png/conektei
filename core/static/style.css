@@ -1,6 +1,6 @@
 :root {
     /* Atualizei a cor primária para um azul parecido com a imagem da CONEKTEI */
-    --primary: #0066cc; 
+    --primary: #173f74; 
     --primary-dark: #004c99;
     --conektei-blue: #005a9c; /* Cor específica da Navbar */
     --secondary: #10b981;
@@ -1075,6 +1075,41 @@ header .btn:hover {
     border-color: #0056b3;
 }
 
+/*==============   alinhamento dos botoes adicionar horario  =======================================*/
+/* FORM DE ADICIONAR HORÁRIO */
+.add-time-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+/* AJUSTE PARA INPUTS DESSE FORM */
+.add-time-form .input-group {
+    margin-bottom: 0; /* remove quebra de linha */
+}
+
+/* ALTURA IGUAL PARA INPUT E BOTÃO */
+.add-time-form input {
+    height: 45px;
+}
+
+/* BOTÃO */
+.btn-add {
+    height: 45px;
+    padding: 0 22px;
+    background-color: #1f8f4a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-add:hover {
+    opacity: 0.9;
+}
+/*=====================================================*/
+
 .btn-submit {
     width: 100%;
     padding: 12px;
@@ -1163,3 +1198,7 @@ header .btn:hover {
     box-shadow: 0 4px 6px rgba(0, 86, 179, 0.15);
 }
 
+footer {
+    background-color: #282A2E !important; 
+    color: white;
+}

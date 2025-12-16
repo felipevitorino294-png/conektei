@@ -4,13 +4,14 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+
     <section class="hero" id="home">
         <div class="container hero-container">
             <div class="hero-content">
                 <h1>Conecte-se com os melhores especialistas online</h1>
                 <p>A CONEKTEI oferece consultoria profissional em diversas áreas. Encontre o especialista ideal para você.</p>
                 
-                <form action="{% url 'home' %}" method="GET" class="hero-search">
+                <form action="{% url 'home' %}#experts" method="GET" class="hero-search">
                     <div class="input-group-hero">
                         <i class="fas fa-search"></i>
                         <input type="text" name="q" placeholder="Busque por nome ou profissão..." value="{{ request.GET.q|default:'' }}">
@@ -28,17 +29,54 @@
         <div class="container">
             <div class="section-title"><h2>Áreas de Especialização</h2></div>
             <div class="profession-categories">
-                <a href="{% url 'home' %}" class="category-btn">Todas</a>
-                <a href="?category=Tecnologia e TI" class="category-btn">Tecnologia</a>
-                <a href="?category=Saúde e Bem-estar" class="category-btn">Saúde</a>
-                <a href="?category=Consultoria Jurídica" class="category-btn">Jurídico</a>
-                <a href="?category=Marketing Digital" class="category-btn">Marketing</a>
-                <a href="?category=Consultoria Financeira" class="category-btn">Finanças</a>
+                <a href="{% url 'home' %}#experts" class="category-btn">Todas</a>
+                <a href="?category=Tecnologia e TI#experts" class="category-btn">Tecnologia</a>
+                <a href="?category=Saúde e Bem-estar#experts" class="category-btn">Saúde</a>
+                <a href="?category=Consultoria Jurídica#experts" class="category-btn">Jurídico</a>
+                <a href="?category=Marketing Digital#experts" class="category-btn">Marketing</a>
+                <a href="?category=Consultoria Financeira#experts" class="category-btn">Finanças</a>
             </div>
         </div>
     </section>
 
-    <section class="experts" id="experts" style="background-color: #f8fbff; padding: 80px 0;">
+    <section id="how-it-works" style="background-color: #f8fbff; padding: 80px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+                <p>Siga estes 3 passos para realizar seu atendimento.</p>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 40px; text-align: center; flex-wrap: wrap;">
+                
+                <div style="flex: 1; min-width: 250px; max-width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                    <div style="width: 70px; height: 70px; background: #eef6fc; color: #0056b3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px;">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 style="color: #333; margin-bottom: 10px;">1. Escolha</h3>
+                    <p style="color: #666; font-size: 0.95rem;">Encontre o especialista ideal filtrando por área ou nome.</p>
+                </div>
+
+                <div style="flex: 1; min-width: 250px; max-width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                    <div style="width: 70px; height: 70px; background: #eef6fc; color: #0056b3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px;">
+                        <i class="far fa-calendar-check"></i>
+                    </div>
+                    <h3 style="color: #333; margin-bottom: 10px;">2. Agende</h3>
+                    <p style="color: #666; font-size: 0.95rem;">Veja a agenda disponível e reserve o melhor horário.</p>
+                </div>
+
+                <div style="flex: 1; min-width: 250px; max-width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                    <div style="width: 70px; height: 70px; background: #eef6fc; color: #0056b3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px;">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 style="color: #333; margin-bottom: 10px;">3. Conecte-se</h3>
+                    <p style="color: #666; font-size: 0.95rem;">Acesse seu painel no horário marcado e realize a consulta.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="experts" id="experts" style="padding: 80px 0;">
         <div class="container">
             <div class="section-title">
                 <h2>Nossos Especialistas</h2>
@@ -91,7 +129,7 @@
         </div>
     </section>
 
-    <section class="plans" id="plans" style="padding: 80px 0;">
+    <section class="plans" id="plans" style="padding: 80px 0; background-color: #f8fbff;">
         <div class="container">
             <div class="section-title">
                 <h2>Planos de Acesso</h2>
@@ -138,6 +176,77 @@
         </div>
     </section>
 
+    <section id="contact" style="padding: 80px 0; border-top: 1px solid #eee;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Fale Conosco</h2>
+                <p>Tem alguma dúvida ou deseja remarcar a consulta? Envie uma mensagem para nossa equipe.</p>
+            </div>
+            
+            <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <form id="contact-form">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50;">Seu Nome</label>
+                        <input type="text" name="user_name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50;">Seu E-mail</label>
+                        <input type="email" name="user_email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50;">Mensagem</label>
+                        <textarea name="message" required style="width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <button type="submit" id="button-send" class="btn" style="width: 100%; border: none; cursor: pointer; font-size: 1.1rem;">
+                        Enviar Mensagem
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("DOjZTWZ7_EQxIPZG6");
+       })();
+
+       const btn = document.getElementById('button-send');
+
+       document.getElementById('contact-form')
+        .addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          btn.textContent = 'Enviando...';
+          btn.style.opacity = '0.7';
+
+          const serviceID = 'service_42od2mj';
+          const templateID = 'template_3dvqa6s';
+
+          emailjs.sendForm(serviceID, templateID, this)
+            .then(() => {
+              btn.textContent = 'Mensagem Enviada!';
+              btn.style.backgroundColor = '#2ecc71';
+              alert('Obrigado! Sua mensagem foi enviada com sucesso.');
+              document.getElementById('contact-form').reset();
+              setTimeout(() => {
+                  btn.textContent = 'Enviar Mensagem';
+                  btn.style.backgroundColor = '#0056b3';
+                  btn.style.opacity = '1';
+              }, 3000);
+            }, (err) => {
+              btn.textContent = 'Erro ao Enviar';
+              btn.style.backgroundColor = '#e74c3c';
+              alert('Ocorreu um erro ao enviar. Verifique o console.');
+              console.log(JSON.stringify(err));
+            });
+        });
+    </script>
+
     <style>
         /* Estilos Gerais */
         .hero-search { margin: 30px 0; max-width: 500px; }
@@ -161,7 +270,6 @@
         .spec-price strong { font-size: 1.2rem; color: #2c3e50; }
         .btn-schedule { background-color: #0056b3; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; transition: 0.3s; border: none; cursor: pointer; }
         
-        /* Planos */
         .pricing-plans { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
         .pricing-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 300px; position: relative; border: 1px solid #eee; transition: 0.3s; }
         .pricing-card.popular { border: 2px solid #0056b3; transform: scale(1.05); }
