@@ -129,47 +129,98 @@
         </div>
     </section>
 
-    <section class="plans" id="plans" style="padding: 80px 0; background-color: #f8fbff;">
+    <section id="plans" style="padding: 80px 0; background-color: #f8f9fa;">
         <div class="container">
-            <div class="section-title">
-                <h2>Planos de Acesso</h2>
-                <p>Escolha a melhor opção para você.</p>
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="color: #1c548c; font-weight: 700; margin-bottom: 15px;">Escolha o plano ideal para você</h2>
+                <p style="color: #666; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+                    Invista na sua carreira com acesso exclusivo e benefícios premium. 
+                    Cancele ou troque de plano a qualquer momento.
+                </p>
             </div>
 
-            <div class="pricing-plans">
+            <div class="plans-grid" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: stretch;">
                 
-                <div class="pricing-card">
-                    <h3>Básico</h3>
-                    <div class="price">R$ 29<span>,90</span></div>
-                    <p class="pricing-period">mensal</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Acesso aos especialistas</li>
-                        <li><i class="fas fa-check"></i> Agendamento liberado</li>
+                <div class="plan-card" style="background: white; padding: 40px 30px; border-radius: 15px; width: 300px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; position: relative; display: flex; flex-direction: column;">
+                    <h3 style="color: #333; font-size: 1.5rem; font-weight: 700;">Básico</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">Para quem busca consultas pontuais.</p>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <span style="font-size: 2.5rem; font-weight: 800; color: #1c548c;">R$ 29,90</span>
+                        <span style="color: #888;">/mês</span>
+                    </div>
+
+                    <ul style="list-style: none; padding: 0; margin: 0 0 30px 0; flex-grow: 1; text-align: left;">
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Acesso a todos especialistas
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Histórico de consultas
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Suporte por e-mail
+                        </li>
                     </ul>
-                    <a href="{% url 'checkout' 'Basico' '29.90' %}" class="btn btn-outline">Assinar Agora</a>
+
+                    <a href="{% url 'checkout' 'Basico' '29.90' %}" class="btn-plan" style="display: block; width: 100%; padding: 12px; border: 2px solid #1c548c; color: #1c548c; text-align: center; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.3s;">Assinar Básico</a>
                 </div>
-                
-                <div class="pricing-card popular">
-                    <div class="popular-badge">Recomendado</div>
-                    <h3>Premium</h3>
-                    <div class="price">R$ 59<span>,90</span></div>
-                    <p class="pricing-period">trimestral</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Tudo do Básico</li>
-                        <li><i class="fas fa-check"></i> Suporte Prioritário</li>
+
+                <div class="plan-card featured" style="background: white; padding: 40px 30px; border-radius: 15px; width: 320px; box-shadow: 0 10px 30px rgba(28, 84, 140, 0.2); border: 2px solid #1c548c; position: relative; display: flex; flex-direction: column; transform: scale(1.05); z-index: 2;">
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #1c548c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                        MAIS ESCOLHIDO
+                    </div>
+
+                    <h3 style="color: #1c548c; font-size: 1.6rem; font-weight: 700;">Premium</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">A melhor experiência para sua carreira.</p>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <span style="font-size: 2.8rem; font-weight: 800; color: #1c548c;">R$ 59,90</span>
+                        <span style="color: #888;">/mês</span>
+                    </div>
+
+                    <ul style="list-style: none; padding: 0; margin: 0 0 30px 0; flex-grow: 1; text-align: left;">
+                        <li style="margin-bottom: 12px; color: #333; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i> Tudo do Básico, mais:
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> <strong>Agenda Prioritária (Fura-fila)</strong>
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Sem taxas de serviço
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Suporte VIP (WhatsApp)
+                        </li>
                     </ul>
-                    <a href="{% url 'checkout' 'Premium' '59.90' %}" class="btn">Assinar Agora</a>
+
+                    <a href="{% url 'checkout' 'Premium' '59.90' %}" class="btn-plan-featured" style="display: block; width: 100%; padding: 15px; background: #1c548c; color: white; text-align: center; border-radius: 8px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(28, 84, 140, 0.3); transition: 0.3s;">Quero ser Premium</a>
                 </div>
-                
-                <div class="pricing-card">
-                    <h3>Empresarial</h3>
-                    <div class="price">R$ 149<span>,90</span></div>
-                    <p class="pricing-period">anual</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Múltiplos usuários</li>
-                        <li><i class="fas fa-check"></i> Gerente de conta</li>
+
+                <div class="plan-card" style="background: white; padding: 40px 30px; border-radius: 15px; width: 300px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; position: relative; display: flex; flex-direction: column;">
+                    <h3 style="color: #333; font-size: 1.5rem; font-weight: 700;">Empresarial</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">Para equipes de alta performance.</p>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <span style="font-size: 2.5rem; font-weight: 800; color: #1c548c;">R$ 149,90</span>
+                        <span style="color: #888;">/mês</span>
+                    </div>
+
+                    <ul style="list-style: none; padding: 0; margin: 0 0 30px 0; flex-grow: 1; text-align: left;">
+                        <li style="margin-bottom: 12px; color: #333; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-plus-circle" style="color: #10b981;"></i> Tudo do Premium, mais:
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Acesso para 5 usuários
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Painel de gestão de time
+                        </li>
+                        <li style="margin-bottom: 12px; color: #444; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check" style="color: #1c548c;"></i> Gerente de conta exclusivo
+                        </li>
                     </ul>
-                    <a href="{% url 'checkout' 'Empresarial' '149.90' %}" class="btn btn-outline">Assinar Agora</a>
+
+                    <a href="{% url 'checkout' 'Empresarial' '149.90' %}" class="btn-plan" style="display: block; width: 100%; padding: 12px; border: 2px solid #1c548c; color: #1c548c; text-align: center; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.3s;">Assinar Empresarial</a>
                 </div>
 
             </div>
@@ -248,7 +299,7 @@
     </script>
 
     <style>
-        /* Estilos Gerais */
+        /* Estilos Gerais (Mantidos para Hero e Experts) */
         .hero-search { margin: 30px 0; max-width: 500px; }
         .input-group-hero { display: flex; background: white; padding: 5px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); align-items: center; }
         .input-group-hero i { padding-left: 20px; color: #999; }
@@ -256,6 +307,7 @@
         .input-group-hero button { background: #0056b3; color: white; border: none; padding: 12px 30px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .category-btn { text-decoration: none; display: inline-block; cursor: pointer; margin-right: 10px; padding: 10px; background: #eee; border-radius: 5px; color: #333; }
         
+        /* Estilos dos Cards de Especialistas */
         .specialists-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-top: 40px; }
         .expert-card { width: 100%; max-width: 350px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; display: flex; flex-direction: column; }
         .expert-card:hover { transform: translateY(-5px); }
@@ -270,15 +322,7 @@
         .spec-price strong { font-size: 1.2rem; color: #2c3e50; }
         .btn-schedule { background-color: #0056b3; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; transition: 0.3s; border: none; cursor: pointer; }
         
-        .pricing-plans { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
-        .pricing-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 300px; position: relative; border: 1px solid #eee; transition: 0.3s; }
-        .pricing-card.popular { border: 2px solid #0056b3; transform: scale(1.05); }
-        .popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #0056b3; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .price { font-size: 2.5rem; color: #2c3e50; font-weight: bold; margin: 20px 0; }
-        .pricing-features { list-style: none; padding: 0; margin-bottom: 30px; text-align: left; }
-        .pricing-features li { margin-bottom: 10px; color: #666; }
+        /* Botões do Formulário e Gerais */
         .btn { background: #0056b3; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
-        .btn-outline { background: transparent; border: 2px solid #0056b3; color: #0056b3; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; font-weight: bold; }
-        .btn-outline:hover { background: #0056b3; color: white; }
     </style>
 {% endblock %}

@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Painel{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+
+        {% if is_specialist %}
+            
+            <div class="dashboard-header">
+                <div>
+                    <h1>Painel do Especialista 💼</h1>
+                    <p>Gerencie sua agenda e visualize seus atendimentos.</p>
+                </div>
+                <a href="{% url 'specialist_detail' profile.id %}" class="btn-view-profile">
+                    <i class="far fa-eye"></i> Ver meu Perfil Público
+                </a>
+            </div>
+
+            <div class="specialist-dashboard-grid">
+                
+                <div class="card-management">
+                    <div class="card-title">
+                        <h3><i class="fas fa-plus-circle"></i> Abrir Novo Horário</h3>
+                    </div>
+                    <form method="POST" action="{% url 'create_appointment' %}" class="add-slot-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Data:</label>
+                            <input type="date" name="date" required class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Hora:</label>
+                            <input type="time" name="time" required class="form-input">
+                        </div>
+                        <button type="submit" class="btn-add-slot">
+                            Liberar Horário
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-schedule-list">
+                    <div class="card-title">
+                        <h3><i class="fas fa-calendar-alt"></i> Minha Agenda</h3>
+                    </div>
+
+                    <div class="schedule-items">
+                        {% for appt in appointments %}
+                            <div class="schedule-item {% if appt.is_booked %}booked-item{% else %}free-item{% endif %}">
+                                
+                                <div class="schedule-time">
+                                    <span class="s-date">{{ appt.date|date:"d/m" }}</span>
+                                    <span class="s-time">{{ appt.time|time:"H:i" }}</span>
+                                </div>
+
+                                <div class="schedule-info">
+                                    {% if appt.is_booked %}
+                                        <span class="status-tag confirmed">AGENDADO</span>
+                                        <div class="client-info">
+                                            <i class="fas fa-user"></i> {{ appt.client.first_name }} {{ appt.client.last_name }}
+                                        </div>
+                                    {% else %}
+                                        <span class="status-tag available">LIVRE</span>
+                                        <div class="client-info text-muted">Aguardando agendamento...</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="schedule-action">
+                                    <a href="{% url 'delete_appointment' appt.id %}" class="btn-trash" onclick="return confirm('Tem certeza que deseja excluir este horário?');" title="Excluir Horário">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-agenda-spec">
+                                <p>Sua agenda está vazia. Adicione horários ao lado para começar a atender.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+        {% else %}
+
+            {% if not user.profile.has_active_plan %}
+                <div class="welcome-container">
+                    <h1 class="welcome-title">Bem-vindo, {{ user.first_name }}! 👋</h1>
+                    <p class="welcome-subtitle">Para acessar a agenda completa dos especialistas, escolha seu plano ideal:</p>
+
+                    <div class="plans-preview-grid">
+                        <div class="plan-preview-card">
+                            <h3>Básico</h3>
+                            <div class="price">R$ 29<span>,90</span> <small>/mês</small></div>
+                            <a href="{% url 'plans_selection' %}" class="btn-select btn-outline">Assinar Agora</a>
+                        </div>
+                        <div class="plan-preview-card popular">
+                            <div class="badge-pop">Recomendado</div>
+                            <h3>Premium</h3>
+                            <div class="price">R$ 59<span>,90</span> <small>/trimestre</small></div>
+                            <a href="{% url 'plans_selection' %}" class="btn-select btn-primary">Assinar Agora</a>
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                
+                <div class="dashboard-section-header">
+                    <h2><i class="far fa-calendar-check"></i> Meus Agendamentos</h2>
+                    <a href="{% url 'home' %}#experts" class="btn-new-appointment">
+                        <i class="fas fa-plus"></i> Nova Consulta
+                    </a>
+                </div>
+
+                <div class="appointments-grid">
+                    {% for appt in appointments %}
+                        <div class="appointment-card">
+                            <div class="date-box">
+                                <span class="day">{{ appt.date|date:"d" }}</span>
+                                <span class="month">{{ appt.date|date:"M" }}</span>
+                            </div>
+
+                            <div class="appt-details">
+                                <div class="specialist-row">
+                                    {% if appt.specialist.photo %}
+                                        <img src="{{ appt.specialist.photo.url }}" class="mini-avatar">
+                                    {% else %}
+                                        <div class="mini-no-photo"><i class="fas fa-user"></i></div>
+                                    {% endif %}
+                                    <div>
+                                        <h4>{{ appt.specialist.user.first_name }}</h4>
+                                        <span class="profession-tag">{{ appt.specialist.get_profession_display }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="time-row">
+                                    <span><i class="far fa-clock"></i> {{ appt.time|time:"H:i" }}</span>
+                                    <span class="status-confirmed"><i class="fas fa-check-circle"></i> Confirmado</span>
+                                </div>
+                            </div>
+
+                            <div class="card-action">
+                                <a href="{% url 'home' %}#contact" class="btn-icon-cancel" title="Solicitar alteração ou cancelamento">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state-card">
+                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="Sem agendamentos" style="width: 80px; opacity: 0.5;">
+                            <h3>Nenhuma consulta agendada</h3>
+                            <p>Aproveite seu plano e marque seu primeiro atendimento agora mesmo.</p>
+                            <a href="{% url 'home' %}#experts" class="btn-cta-empty">Ver Especialistas</a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if appointments %}
+                    <div style="margin-top: 25px; padding: 15px; background-color: #fff; border: 1px solid #eee; border-radius: 10px; font-size: 0.9rem; color: #7f8c8d; text-align: center; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                        <i class="fas fa-info-circle" style="color: #1c548c; margin-right: 5px;"></i>
+                        Caso deseje cancelar ou reagendar sua consulta, 
+                        <a href="{% url 'home' %}#contact" style="color: #1c548c; text-decoration: none; font-weight: 600; border-bottom: 1px dotted #1c548c;">
+                            mande uma mensagem para o nosso suporte
+                        </a>.
+                    </div>
+                {% endif %}
+
+                <div class="divider-section"></div>
+
+                <div class="dashboard-section-header">
+                    <h2><i class="fas fa-user-md"></i> Profissionais Disponíveis</h2>
+                    <a href="{% url 'home' %}" class="link-view-all">Ver Todos <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="specialists-carousel">
+                    {% for spec in specialists|slice:":4" %}
+                        <a href="{% url 'specialist_detail' spec.id %}" class="mini-spec-card">
+                            <div class="spec-img-wrapper">
+                                {% if spec.photo %}
+                                    <img src="{{ spec.photo.url }}" alt="{{ spec.user.first_name }}">
+                                {% else %}
+                                    <div class="no-photo-mini"><i class="fas fa-user"></i></div>
+                                {% endif %}
+                                <span class="status-dot"></span>
+                            </div>
+                            <h4>{{ spec.user.first_name }}</h4>
+                            <p>{{ spec.get_profession_display }}</p>
+                        </a>
+                    {% empty %}
+                        <p class="text-muted">Nenhum profissional disponível no momento.</p>
+                    {% endfor %}
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    /* --- ESTRUTURA GERAL --- */
+    .dashboard-container { padding-top: 110px; padding-bottom: 80px; background-color: #f8f9fa; min-height: 100vh; }
+    
+    /* CABEÇALHO */
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .dashboard-header h1 { color: #1c548c; margin: 0; font-size: 1.8rem; }
+    .dashboard-header p { color: #666; margin: 5px 0 0; }
+
+    /* ================= ESPECIALISTA ================= */
+    .specialist-dashboard-grid { display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+    
+    .card-management, .card-schedule-list { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .card-title h3 { margin: 0 0 20px 0; color: #333; font-size: 1.2rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+    
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
+    .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    .btn-add-slot { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-add-slot:hover { background: #219150; }
+
+    .schedule-items { display: flex; flex-direction: column; gap: 10px; }
+    .schedule-item { display: flex; align-items: center; padding: 15px; border-radius: 8px; border: 1px solid #eee; background: white; transition: 0.2s; }
+    .schedule-item:hover { transform: translateX(3px); }
+    
+    .booked-item { border-left: 5px solid #27ae60; background-color: #f9fff9; }
+    .free-item { border-left: 5px solid #ccc; }
+
+    .schedule-time { min-width: 60px; text-align: center; font-weight: bold; color: #1c548c; margin-right: 15px; }
+    .s-date { display: block; font-size: 1.1rem; }
+    .s-time { display: block; font-size: 0.9rem; color: #666; }
+
+    .schedule-info { flex-grow: 1; }
+    .status-tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+    .status-tag.confirmed { background: #d4edda; color: #155724; }
+    .status-tag.available { background: #e2e3e5; color: #383d41; }
+    .client-info { margin-top: 5px; font-size: 0.9rem; font-weight: 500; color: #333; }
+    
+    .btn-trash { color: #e74c3c; padding: 8px; border-radius: 50%; transition: 0.2s; }
+    .btn-trash:hover { background: #fee2e2; }
+    .btn-view-profile { color: #1c548c; text-decoration: none; font-weight: 600; border: 1px solid #1c548c; padding: 8px 15px; border-radius: 50px; transition: 0.3s; }
+    .btn-view-profile:hover { background: #1c548c; color: white; }
+
+    /* ================= CLIENTE ================= */
+    .welcome-container { text-align: center; max-width: 900px; margin: 0 auto; }
+    .welcome-title { color: #1c548c; font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+    .welcome-subtitle { color: #666; font-size: 1.1rem; margin-bottom: 40px; }
+
+    .plans-preview-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .plan-preview-card { background: white; padding: 30px; border-radius: 12px; width: 260px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; position: relative; transition: 0.3s; }
+    .plan-preview-card:hover { transform: translateY(-5px); }
+    .plan-preview-card.popular { border: 2px solid #1c548c; transform: scale(1.05); }
+    .badge-pop { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #1c548c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    
+    .plan-preview-card h3 { font-size: 1.4rem; color: #333; margin-bottom: 10px; }
+    .plan-preview-card .price { font-size: 2rem; font-weight: 800; color: #1c548c; margin-bottom: 20px; }
+    .btn-select { display: block; width: 100%; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+    .btn-outline { border: 1px solid #1c548c; color: #1c548c; }
+    .btn-outline:hover { background: #f0f4f8; }
+    .btn-primary { background: #1c548c; color: white; }
+    .btn-primary:hover { background: #15416d; }
+
+    /* Lista de Agendamentos (Cliente) */
+    .dashboard-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .dashboard-section-header h2 { font-size: 1.5rem; color: #333; margin: 0; }
+    .btn-new-appointment { background: #1c548c; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(28, 84, 140, 0.2); transition: 0.3s; }
+    .btn-new-appointment:hover { transform: translateY(-2px); background: #15416d; }
+
+    .appointments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .appointment-card { background: white; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #eee; transition: 0.2s; }
+    .appointment-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+    
+    .date-box { background: #eef6fc; color: #1c548c; border-radius: 10px; min-width: 65px; height: 65px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; }
+    .date-box .day { font-size: 1.6rem; line-height: 1; }
+    .date-box .month { font-size: 0.75rem; text-transform: uppercase; }
+    
+    .appt-details { flex-grow: 1; }
+    .specialist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .mini-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+    .mini-no-photo { width: 35px; height: 35px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999; font-size: 0.8rem; }
+    .specialist-row h4 { margin: 0; font-size: 1rem; color: #333; font-weight: 600; }
+    .profession-tag { font-size: 0.7rem; color: #666; background: #f5f5f5; padding: 2px 6px; border-radius: 4px; }
+    .time-row { display: flex; gap: 15px; font-size: 0.85rem; color: #555; }
+    .status-confirmed { color: #27ae60; font-weight: 600; }
+    .btn-icon-cancel { color: #ccc; padding: 5px; transition: 0.2s; }
+    .btn-icon-cancel:hover { color: #1c548c; }
+    .empty-state-card { grid-column: 1 / -1; background: white; padding: 50px; text-align: center; border-radius: 12px; border: 2px dashed #eee; }
+    .btn-cta-empty { display: inline-block; background: #27ae60; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+
+    /* Carrossel */
+    .divider-section { height: 1px; background: #eee; margin: 50px 0; }
+    .specialists-carousel { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+    .mini-spec-card { background: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; border: 1px solid #eee; transition: 0.3s; }
+    .mini-spec-card:hover { transform: translateY(-3px); border-color: #1c548c; }
+    .spec-img-wrapper { position: relative; width: 60px; height: 60px; margin: 0 auto 10px; }
+    .spec-img-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .no-photo-mini { width: 100%; height: 100%; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999; font-size: 1.5rem; }
+    .status-dot { width: 12px; height: 12px; background: #27ae60; border: 2px solid white; border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+    .mini-spec-card h4 { margin: 0; font-size: 0.95rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-spec-card p { margin: 2px 0 0; font-size: 0.75rem; color: #888; }
+    .link-view-all { font-size: 0.9rem; color: #1c548c; text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 900px) {
+        .specialist-dashboard-grid { grid-template-columns: 1fr; }
+        .dashboard-header { flex-direction: column; text-align: center; gap: 15px; }
+    }
+</style>
+{% endblock %}

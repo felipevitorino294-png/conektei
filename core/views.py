@@ -32,18 +32,11 @@ def home(request):
     if category and category != 'all':
         specialists = specialists.filter(profession=category)
     
-    # 4. Lista de Profissões para o Menu (Deve ser igual ao choices do models.py)
+    # 4. Lista de Profissões para o Menu
     all_professions = [
-        'Tecnologia e TI',
-        'Saúde e Bem-estar',
-        'Consultoria Jurídica',
-        'Consultoria Financeira',
-        'Marketing Digital',
-        'Coaching Profissional',
-        'Educação',
-        'Engenharia',
-        'Arquitetura e Design',
-        'Psicologia'
+        'Tecnologia e TI', 'Saúde e Bem-estar', 'Consultoria Jurídica',
+        'Consultoria Financeira', 'Marketing Digital', 'Coaching Profissional',
+        'Educação', 'Engenharia', 'Arquitetura e Design', 'Psicologia'
     ]
     
     return render(request, 'home.html', {
@@ -69,22 +62,42 @@ def specialist_detail_view(request, id):
         'appointments': appointments
     })
 
-# --- DASHBOARD (Redireciona para o painel correto) ---
+# --- DASHBOARD (CORRIGIDO E COMPLETO) ---
 @login_required
 def dashboard_view(request):
     profile = get_profile(request.user)
     
+    # Contexto Base (Enviamos 'profile' para corrigir o erro de link)
+    context = {
+        'user': request.user,
+        'profile': profile,  # <--- CORREÇÃO IMPORTANTE AQUI
+        'is_specialist': profile.is_specialist,
+    }
+
     if profile.is_specialist:
-        # Painel do Especialista: Vê seus horários criados
+        # Painel do Especialista: Vê horários que ele criou
         appointments = Appointment.objects.filter(
             specialist=profile,
             date__gte=date.today()
         ).order_by('date', 'time')
-        return render(request, 'dashboard_specialist.html', {'appointments': appointments})
+        
+        context['appointments'] = appointments
+        return render(request, 'dashboard.html', context)
+    
     else:
-        # Painel do Cliente: Vê especialistas disponíveis
+        # Painel do Cliente: Vê agendamentos que ELE MARCOU
+        my_appointments = Appointment.objects.filter(
+            client=request.user,
+            date__gte=date.today()
+        ).order_by('date', 'time')
+        
+        # Sugestão de especialistas
         specialists = Profile.objects.filter(is_specialist=True).exclude(price__isnull=True)
-        return render(request, 'dashboard_client.html', {'specialists': specialists})
+        
+        context['appointments'] = my_appointments
+        context['specialists'] = specialists
+        
+        return render(request, 'dashboard.html', context)
 
 # --- AGENDAMENTO (Cliente reserva horário) ---
 @login_required
@@ -96,7 +109,7 @@ def book_appointment_view(request, appointment_id):
         messages.error(request, 'Especialistas não podem agendar consultas.')
         return redirect('dashboard')
 
-    # Descomente abaixo se quiser obrigar o pagamento antes de agendar
+    # Validação de Plano (Opcional - descomente se quiser ativar)
     # if not profile.has_active_plan:
     #     messages.error(request, 'Você precisa de um plano ativo para agendar.')
     #     return redirect('plans_selection')
@@ -111,7 +124,7 @@ def book_appointment_view(request, appointment_id):
         appointment.save()
         messages.success(request, 'Agendamento confirmado com sucesso!')
     
-    return redirect('specialist_detail', id=appointment.specialist.id)
+    return redirect('dashboard')
 
 # --- GERENCIAMENTO DE AGENDA (Especialista cria/deleta horários) ---
 @login_required
@@ -124,7 +137,7 @@ def create_appointment_view(request):
         date_appt = request.POST.get('date')
         time_appt = request.POST.get('time')
         
-        # Evita criar horário duplicado no mesmo dia/hora
+        # Evita duplicidade
         if not Appointment.objects.filter(specialist=profile, date=date_appt, time=time_appt).exists():
             Appointment.objects.create(
                 specialist=profile,
@@ -149,20 +162,17 @@ def delete_appointment_view(request, appointment_id):
 # --- LOGIN / CADASTRO / LOGOUT ---
 def login_view(request):
     if request.method == 'POST':
-        # Se for CADASTRO (tem campo 'confirm_password')
+        # CADASTRO
         if 'confirm_password' in request.POST:
             try:
-                # Verifica se senhas batem
                 if request.POST.get('password') != request.POST.get('confirm_password'):
                     messages.error(request, 'As senhas não coincidem.')
                     return render(request, 'login.html')
 
-                # Verifica se email já existe
                 if User.objects.filter(email=request.POST.get('email')).exists():
                     messages.error(request, 'Este email já está cadastrado.')
                     return render(request, 'login.html')
 
-                # Cria Usuário
                 user = User.objects.create_user(
                     username=request.POST.get('email'), 
                     email=request.POST.get('email'), 
@@ -171,7 +181,6 @@ def login_view(request):
                 user.first_name = request.POST.get('name')
                 user.save()
 
-                # Define Tipo (Especialista ou Cliente)
                 tipo = request.POST.get('user_type')
                 is_spec = (tipo == 'specialist')
                 
@@ -179,31 +188,25 @@ def login_view(request):
                 grupo, _ = Group.objects.get_or_create(name='Especialistas' if is_spec else 'Clientes')
                 user.groups.add(grupo)
 
-                # Loga o usuário automaticamente
                 auth_login(request, user)
-
                 messages.success(request, 'Conta criada com sucesso!')
+                
                 if is_spec:
-                    return redirect('edit_profile') # Especialista novo vai completar perfil
+                    return redirect('edit_profile')
                 else:
                     return redirect('home')
 
             except Exception as e:
                 messages.error(request, 'Erro ao criar conta. Tente novamente.')
-                print(e) # Para debug no terminal
+                print(e)
                 return render(request, 'login.html')
         
-        # Se for LOGIN (não tem 'confirm_password')
+        # LOGIN
         else:
             user = authenticate(request, username=request.POST.get('email'), password=request.POST.get('password'))
             if user:
                 auth_login(request, user)
-                
-                profile = get_profile(user)
-                if profile.is_specialist:
-                    return redirect('dashboard')
-                else:
-                    return redirect('home')
+                return redirect('dashboard')
             else:
                 messages.error(request, 'Email ou senha incorretos.')
                 
@@ -240,7 +243,8 @@ def delete_account_view(request):
 # --- PAGAMENTOS E PLANOS ---
 @login_required
 def plans_selection_view(request):
-    return render(request, 'subscription_plans.html')
+    # Aponta para o arquivo correto criado anteriormente
+    return render(request, 'plans_selection.html')
 
 @login_required
 def checkout_view(request, plan_type, price):

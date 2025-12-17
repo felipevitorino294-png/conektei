@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %}{{ spec.user.first_name }} - Agendamento{% endblock %}
 
 {% block content %}
@@ -86,6 +85,15 @@
                                 </div>
                             {% endfor %}
                         </div>
+
+                        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.85rem; color: #7f8c8d; text-align: center; line-height: 1.5;">
+                            <i class="fas fa-info-circle" style="color: #1c548c; margin-right: 5px;"></i>
+                            Caso deseje cancelar ou reagendar sua consulta, 
+                            <a href="{% url 'home' %}#contact" style="color: #1c548c; text-decoration: none; font-weight: 600; border-bottom: 1px dotted #1c548c;">
+                                mande uma mensagem para o nosso suporte
+                            </a>.
+                        </div>
+
                     {% endif %}
                 </div>
 
